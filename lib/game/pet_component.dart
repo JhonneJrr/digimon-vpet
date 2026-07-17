@@ -48,4 +48,21 @@ class PetComponent extends SpriteAnimationComponent with HasGameReference {
       ),
     );
   }
+
+  /// Gentle continuous "breathing" — a subtle scale pulse, so the pet reads as
+  /// alive while the world scrolls under it. Scale-based (not position-based)
+  /// so it never fights VpetGame's centering/ground placement.
+  void startIdlePulse() {
+    add(
+      ScaleEffect.by(
+        Vector2.all(1.04),
+        EffectController(
+          duration: 0.9,
+          reverseDuration: 0.9,
+          infinite: true,
+          curve: Curves.easeInOut,
+        ),
+      ),
+    );
+  }
 }
