@@ -7,9 +7,15 @@ plugins {
 android {
     namespace = "com.digimon.vpet.digimon"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    // This app has no native C/C++ code, so it does not need the Android NDK.
+    // The default flutter.ndkVersion pointed at an NDK that isn't installed,
+    // making AGP try to auto-provision a ~2.4GB NDK on every build. Omit it so
+    // AGP only requires the NDK when a task genuinely needs native tooling.
+    // ndkVersion = flutter.ndkVersion
 
     compileOptions {
+        // Required by flutter_local_notifications (uses java.time APIs).
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
@@ -42,4 +48,10 @@ kotlin {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    // Backports java.time etc. for older Android; required by
+    // flutter_local_notifications with core library desugaring enabled.
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }
