@@ -65,4 +65,22 @@ class PetLogic {
       lastTickMs: nowMs,
     );
   }
+
+  static double _bump(double s, double d) => (s + d).clamp(0.0, 1.0);
+
+  static Pet feed(Pet p) =>
+      p.copyWith(hunger: (p.hunger - 1).clamp(0, GameConfig.hungerMax),
+                 careScore: _bump(p.careScore, 0.05));
+
+  static Pet clean(Pet p) =>
+      p.copyWith(poopCount: 0, careScore: _bump(p.careScore, 0.05));
+
+  static Pet giveMedicine(Pet p) => p.health == HealthStatus.sick
+      ? p.copyWith(health: HealthStatus.healthy, clearSickSince: true,
+                   careScore: _bump(p.careScore, 0.1))
+      : p;
+
+  static Pet play(Pet p) =>
+      p.copyWith(happiness: (p.happiness + 1).clamp(0, GameConfig.happinessMax),
+                 careScore: _bump(p.careScore, 0.05));
 }

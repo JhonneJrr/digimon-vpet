@@ -48,4 +48,30 @@ void main() {
       expect(r.isDead, true);
     });
   });
+
+  group('care actions', () {
+    test('feed lowers hunger and raises careScore', () {
+      final p = Pet.newborn(0).copyWith(hunger: 3, careScore: 0.5);
+      final r = PetLogic.feed(p);
+      expect(r.hunger, 2);
+      expect(r.careScore, greaterThan(0.5));
+    });
+    test('clean removes all poop', () {
+      final p = Pet.newborn(0).copyWith(poopCount: 2);
+      expect(PetLogic.clean(p).poopCount, 0);
+    });
+    test('medicine cures a sick pet only', () {
+      final sick = Pet.newborn(0)
+          .copyWith(health: HealthStatus.sick, sickSinceMs: 10);
+      final cured = PetLogic.giveMedicine(sick);
+      expect(cured.health, HealthStatus.healthy);
+      expect(cured.sickSinceMs, isNull);
+      final healthy = Pet.newborn(0);
+      expect(PetLogic.giveMedicine(healthy).health, HealthStatus.healthy);
+    });
+    test('play raises happiness capped at max', () {
+      final p = Pet.newborn(0).copyWith(happiness: GameConfig.happinessMax);
+      expect(PetLogic.play(p).happiness, GameConfig.happinessMax);
+    });
+  });
 }
