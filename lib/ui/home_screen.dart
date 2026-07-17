@@ -2,11 +2,13 @@
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
 import '../game/vpet_game.dart';
-import '../state/game_config.dart';
 import '../state/notifications.dart';
 import '../state/pet.dart';
 import '../state/pet_repository.dart';
 import 'death_screen.dart';
+import 'widgets/action_dock.dart';
+import 'widgets/status_badges.dart';
+import 'widgets/top_status_bar.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -65,81 +67,54 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF9BBC0F), // vpet-green LCD vibe
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: Stack(
+      backgroundColor: const Color(0xFF1A1420),
+      body: Stack(
+        children: [
+          Positioned.fill(child: GameWidget(game: game)),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
                 children: [
-                  GameWidget(game: game),
-                  _statusIcons(),
+                  TopStatusBar(pet: _petOrNull(), onSettings: null),
+                  const SizedBox(height: 8),
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: StatusBadges(pet: _petOrNull()),
+                  ),
+                  const Spacer(),
+                  _dock(),
                 ],
               ),
             ),
-            _buttonRow(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _statusIcons() {
-    // game.pet is `late` and only set once onLoad completes; guard against
-    // reading it during the first build.
-    Pet? p;
-    try {
-      p = game.pet;
-    } catch (_) {
-      p = null;
-    }
-    if (p == null) return const SizedBox.shrink();
-    return Padding(
-      padding: const EdgeInsets.all(8),
-      child: Row(
-        children: [
-          if (p.hunger >= GameConfig.hungerWarnThreshold)
-            Image.asset('assets/ui/hunger.png', width: 24),
-          if (p.poopCount > 0) Image.asset('assets/ui/poop.png', width: 24),
-          if (p.health == HealthStatus.sick)
-            Image.asset('assets/ui/skull.png', width: 24),
-        ],
-      ),
-    );
-  }
-
-  Widget _buttonRow() {
-    // Until the game has loaded its pet, every button is disabled so a tap
-    // can't reach the `late` pet field. Once loaded, dim buttons that are not
-    // currently relevant (spec: "irrelevant buttons are dimmed").
-    final p = game.isReady ? game.pet : null;
-    return Container(
-      padding: const EdgeInsets.all(12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          _btn('assets/ui/food.png', game.feed, p != null && p.hunger > 0),
-          _btn('assets/ui/clean.png', game.clean, p != null && p.poopCount > 0),
-          _btn('assets/ui/medicine.png', game.medicine,
-              p != null && p.health == HealthStatus.sick),
-          _btn('assets/ui/heart.png', game.play, p != null),
-        ],
-      ),
-    );
-  }
-
-  Widget _btn(String asset, Future<void> Function() onTap, bool enabled) =>
-      IconButton(
-        iconSize: 40,
-        onPressed: enabled ? () => onTap() : null,
-        icon: Opacity(
-          opacity: enabled ? 1.0 : 0.35,
-          child: Image.asset(
-            asset,
-            width: 40,
-            errorBuilder: (context, error, stackTrace) =>
-                const Icon(Icons.circle_outlined),
           ),
-        ),
-      );
+        ],
+      ),
+    );
+  }
+
+  Pet _petOrNull() {
+    // game.pet is `late`; before load, show a neutral newborn so the HUD can
+    // render without throwing (mirrors the MVP's null-guard intent).
+    try {
+      return game.pet;
+    } catch (_) {
+      return Pet.newborn(0);
+    }
+  }
+
+  Widget _dock() {
+    final ready = game.isReady;
+    final p = ready ? game.pet : null;
+    return ActionDock(
+      onFeed: game.feed,
+      onClean: game.clean,
+      onMedicine: game.medicine,
+      onPlay: game.play,
+      feedEnabled: p != null && p.hunger > 0,
+      cleanEnabled: p != null && p.poopCount > 0,
+      medicineEnabled: p != null && p.health == HealthStatus.sick,
+      playEnabled: p != null,
+    );
+  }
 }
