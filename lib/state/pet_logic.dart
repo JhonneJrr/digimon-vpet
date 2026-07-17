@@ -83,4 +83,23 @@ class PetLogic {
   static Pet play(Pet p) =>
       p.copyWith(happiness: (p.happiness + 1).clamp(0, GameConfig.happinessMax),
                  careScore: _bump(p.careScore, 0.05));
+
+  static Pet checkEvolution(Pet p, int nowMs) {
+    final dur = GameConfig.stageDurationMs[p.stage];
+    if (dur == null || p.isDead) return p; // perfect stages have no duration
+    if (nowMs - p.stageStartedAtMs < dur) return p;
+    late LifeStage next;
+    switch (p.stage) {
+      case LifeStage.baby1: next = LifeStage.baby2; break;
+      case LifeStage.baby2: next = LifeStage.child; break;
+      case LifeStage.child: next = LifeStage.adult; break;
+      case LifeStage.adult:
+        next = p.careScore >= GameConfig.careScoreThreshold
+            ? LifeStage.perfectMetal
+            : LifeStage.perfectSkull;
+        break;
+      default: return p;
+    }
+    return p.copyWith(stage: next, stageStartedAtMs: nowMs);
+  }
 }

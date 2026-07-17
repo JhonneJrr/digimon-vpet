@@ -74,4 +74,30 @@ void main() {
       expect(PetLogic.play(p).happiness, GameConfig.happinessMax);
     });
   });
+
+  group('evolution', () {
+    test('baby1 evolves to baby2 after its duration', () {
+      final p = Pet.newborn(0);
+      final r = PetLogic.checkEvolution(p, GameConfig.stageDurationMs[LifeStage.baby1]!);
+      expect(r.stage, LifeStage.baby2);
+      expect(r.stageStartedAtMs, GameConfig.stageDurationMs[LifeStage.baby1]!);
+    });
+    test('well-cared adult -> MetalGreymon', () {
+      final p = Pet.newborn(0)
+          .copyWith(stage: LifeStage.adult, careScore: 0.9, stageStartedAtMs: 0);
+      final r = PetLogic.checkEvolution(p, GameConfig.stageDurationMs[LifeStage.adult]!);
+      expect(r.stage, LifeStage.perfectMetal);
+    });
+    test('neglected adult -> SkullGreymon', () {
+      final p = Pet.newborn(0)
+          .copyWith(stage: LifeStage.adult, careScore: 0.2, stageStartedAtMs: 0);
+      final r = PetLogic.checkEvolution(p, GameConfig.stageDurationMs[LifeStage.adult]!);
+      expect(r.stage, LifeStage.perfectSkull);
+    });
+    test('perfect stage does not evolve', () {
+      final p = Pet.newborn(0).copyWith(stage: LifeStage.perfectMetal);
+      final r = PetLogic.checkEvolution(p, 999999999);
+      expect(r.stage, LifeStage.perfectMetal);
+    });
+  });
 }
