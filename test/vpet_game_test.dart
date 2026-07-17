@@ -40,6 +40,30 @@ void main() {
     expect(repo.stored?.hunger, 1, reason: 'feed() should persist via repo');
   });
 
+  test('isReady flag is false before onLoad and true after', () async {
+    final game = VpetGame(repo: _FakeRepo(), clock: () => 0);
+    expect(game.isReady, false);
+    game.onGameResize(Vector2(400, 600));
+    await game.onLoad();
+    expect(game.isReady, true);
+  });
+
+  test('persisted state stays consistent after rapid un-awaited actions',
+      () async {
+    var fakeNow = 0;
+    final repo = _FakeRepo()..stored = Pet.newborn(0).copyWith(hunger: 4);
+    final game = VpetGame(repo: repo, clock: () => fakeNow);
+    game.onGameResize(Vector2(400, 600));
+    await game.onLoad();
+
+    // Fire several feeds without awaiting each; serialized saves must leave
+    // the persisted state equal to the final in-memory state (no stale write).
+    await Future.wait([game.feed(), game.feed(), game.feed()]);
+
+    expect(game.pet.hunger, 1);
+    expect(repo.stored?.hunger, game.pet.hunger);
+  });
+
   test('restart() resets to a fresh newborn pet', () async {
     var fakeNow = 1000;
     final repo = _FakeRepo()

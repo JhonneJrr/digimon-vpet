@@ -84,27 +84,38 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buttonRow() => Container(
-        padding: const EdgeInsets.all(12),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            _btn('assets/ui/food.png', game.feed),
-            _btn('assets/ui/clean.png', game.clean),
-            _btn('assets/ui/medicine.png', game.medicine),
-            _btn('assets/ui/heart.png', game.play),
-          ],
-        ),
-      );
+  Widget _buttonRow() {
+    // Until the game has loaded its pet, every button is disabled so a tap
+    // can't reach the `late` pet field. Once loaded, dim buttons that are not
+    // currently relevant (spec: "irrelevant buttons are dimmed").
+    final p = game.isReady ? game.pet : null;
+    return Container(
+      padding: const EdgeInsets.all(12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _btn('assets/ui/food.png', game.feed, p != null && p.hunger > 0),
+          _btn('assets/ui/clean.png', game.clean, p != null && p.poopCount > 0),
+          _btn('assets/ui/medicine.png', game.medicine,
+              p != null && p.health == HealthStatus.sick),
+          _btn('assets/ui/heart.png', game.play, p != null),
+        ],
+      ),
+    );
+  }
 
-  Widget _btn(String asset, Future<void> Function() onTap) => IconButton(
+  Widget _btn(String asset, Future<void> Function() onTap, bool enabled) =>
+      IconButton(
         iconSize: 40,
-        onPressed: () => onTap(),
-        icon: Image.asset(
-          asset,
-          width: 40,
-          errorBuilder: (context, error, stackTrace) =>
-              const Icon(Icons.circle_outlined),
+        onPressed: enabled ? () => onTap() : null,
+        icon: Opacity(
+          opacity: enabled ? 1.0 : 0.35,
+          child: Image.asset(
+            asset,
+            width: 40,
+            errorBuilder: (context, error, stackTrace) =>
+                const Icon(Icons.circle_outlined),
+          ),
         ),
       );
 }

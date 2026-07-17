@@ -12,13 +12,18 @@ import 'sprite_map.dart';
 /// sprite-mapping-verified.md).
 class PetComponent extends SpriteAnimationComponent with HasGameReference {
   LifeStage? _currentStage;
+  int _loadGen = 0;
 
   LifeStage stageOf(Pet pet) => pet.stage;
 
   Future<void> showFor(Pet pet) async {
     if (_currentStage == pet.stage && animation != null) return;
-    _currentStage = pet.stage;
+    final gen = ++_loadGen;
     final image = await game.images.load(spriteSheetForStage(pet.stage));
+    // If another showFor started while we awaited the image load, its result
+    // is newer — drop ours so we never strand a stale sprite.
+    if (gen != _loadGen) return;
+    _currentStage = pet.stage;
     final sheet = SpriteSheet(
       image: image,
       srcSize: Vector2.all(frameSize.toDouble()),
