@@ -25,18 +25,18 @@
     "semantic_hash": ""
   },
   "lib/game/sprite_map.dart": {
-    "mtime": 1784263933.5603585,
-    "ast_hash": "68f89419b7e7df9fe41f53f72dbd0c63",
+    "mtime": 1784269966.9226727,
+    "ast_hash": "f07ea6a5acfddbaadf02ee28795df42b",
     "semantic_hash": ""
   },
   "lib/game/vpet_game.dart": {
-    "mtime": 1784267660.5407324,
-    "ast_hash": "4f1019ffa2bdc3b19172bbe3058704ad",
+    "mtime": 1784269872.0759475,
+    "ast_hash": "d605e7b1aa53c37048d9a9bceb741843",
     "semantic_hash": ""
   },
   "lib/main.dart": {
-    "mtime": 1784268130.8858683,
-    "ast_hash": "8a5f46b44c5acfaa464823686b9993f2",
+    "mtime": 1784270023.2711625,
+    "ast_hash": "a0950926ef43c03a17c1f948178a1a80",
     "semantic_hash": ""
   },
   "lib/state/background.dart": {
@@ -45,8 +45,8 @@
     "semantic_hash": ""
   },
   "lib/state/game_config.dart": {
-    "mtime": 1784263472.448331,
-    "ast_hash": "ae0874cd9db09f72056d4ec03672a987",
+    "mtime": 1784269934.5107405,
+    "ast_hash": "bb746d182705c166f9b55f8b6a21630b",
     "semantic_hash": ""
   },
   "lib/state/notifications.dart": {
@@ -60,8 +60,8 @@
     "semantic_hash": ""
   },
   "lib/state/pet_logic.dart": {
-    "mtime": 1784268901.3657434,
-    "ast_hash": "f35d48fb66aa001c94eae30d147f1b3d",
+    "mtime": 1784269865.5234303,
+    "ast_hash": "cac83c291ee420671c8b24eb97c5e4af",
     "semantic_hash": ""
   },
   "lib/state/pet_repository.dart": {
@@ -75,8 +75,8 @@
     "semantic_hash": ""
   },
   "lib/ui/home_screen.dart": {
-    "mtime": 1784268923.8972101,
-    "ast_hash": "ac5a8bdbcd36d93ba7f9b5b59c45a799",
+    "mtime": 1784269950.0367675,
+    "ast_hash": "8d87ee65e62ca84ca01bec496868a3d1",
     "semantic_hash": ""
   },
   "scripts/make_icons.py": {
@@ -95,8 +95,8 @@
     "semantic_hash": ""
   },
   "test/pet_logic_test.dart": {
-    "mtime": 1784268932.7178915,
-    "ast_hash": "b79235f3a2b66aed84a4722a7fb7a6dd",
+    "mtime": 1784269924.0931516,
+    "ast_hash": "e62d71ca5d182587f2be3f7cb6385fcf",
     "semantic_hash": ""
   },
   "test/pet_repository_test.dart": {
@@ -110,8 +110,8 @@
     "semantic_hash": ""
   },
   ".superpowers/sdd/progress.md": {
-    "mtime": 1784269104.9551058,
-    "ast_hash": "3b3e9ad4edd33c3866248dbef9cac9fc",
+    "mtime": 1784270122.1821744,
+    "ast_hash": "ea08b18a236fd6058910b1569cf326c5",
     "semantic_hash": ""
   },
   ".superpowers/sdd/sprite-mapping-verified.md": {
@@ -242,6 +242,66 @@
   "assets/ui/skull.png": {
     "mtime": 1784262861.545738,
     "ast_hash": "6e90ea185b983b16e7184db2b80d6ac3",
+    "semantic_hash": ""
+  },
+  ".claude/settings.json": {
+    "mtime": 1784269171.6433241,
+    "ast_hash": "1cfe068865df8f43a39f0cb65bbc9170",
+    "semantic_hash": ""
+  },
+  ".claude/CLAUDE.md": {
+    "mtime": 1784269171.629322,
+    "ast_hash": "c232166e6492ba1ed955030b16979b05",
+    "semantic_hash": ""
+  },
+  ".claude/skills/graphify/SKILL.md": {
+    "mtime": 1784269171.626321,
+    "ast_hash": "4c3f621c5b36560c2c5a0c303e2784cd",
+    "semantic_hash": ""
+  },
+  ".claude/skills/graphify/references/add-watch.md": {
+    "mtime": 1784259130.9268205,
+    "ast_hash": "d59d027fe449f06aa03905a01184e779",
+    "semantic_hash": ""
+  },
+  ".claude/skills/graphify/references/exports.md": {
+    "mtime": 1784259130.9338727,
+    "ast_hash": "9da2a2152e60a22f07f05fed5158f287",
+    "semantic_hash": ""
+  },
+  ".claude/skills/graphify/references/extraction-spec.md": {
+    "mtime": 1784259130.935873,
+    "ast_hash": "42fef56a01698118f7fd722acdadea34",
+    "semantic_hash": ""
+  },
+  ".claude/skills/graphify/references/github-and-merge.md": {
+    "mtime": 1784259130.937386,
+    "ast_hash": "cde13df085e4c492aeb7ba298a996d0d",
+    "semantic_hash": ""
+  },
+  ".claude/skills/graphify/references/hooks.md": {
+    "mtime": 1784259130.9454393,
+    "ast_hash": "3f545db6ce646650bb9de588f5512a27",
+    "semantic_hash": ""
+  },
+  ".claude/skills/graphify/references/query.md": {
+    "mtime": 1784259130.947441,
+    "ast_hash": "3c46f8ad006874260614ed8657d02307",
+    "semantic_hash": ""
+  },
+  ".claude/skills/graphify/references/transcribe.md": {
+    "mtime": 1784259130.949969,
+    "ast_hash": "67b6a5fa6c0974e18f60db9f8932fbd8",
+    "semantic_hash": ""
+  },
+  ".claude/skills/graphify/references/update.md": {
+    "mtime": 1784259130.9514964,
+    "ast_hash": "c698309979460d0f02ba616417844399",
+    "semantic_hash": ""
+  },
+  "CLAUDE.md": {
+    "mtime": 1784269171.6313224,
+    "ast_hash": "8a6643a420fdad6bfb583523bc6cef16",
     "semantic_hash": ""
   }
 }

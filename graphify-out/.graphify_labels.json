@@ -21,5 +21,15 @@
   "19": "make_icons.py",
   "20": "build.gradle.kts",
   "21": "build.gradle.kts",
-  "22": "settings.gradle.kts"
+  "22": "settings.gradle.kts",
+  "23": "graphify reference: extra exports and benchmark",
+  "24": "graphify reference: query, path, explain",
+  "25": "graphify reference: add a URL and watch a folder",
+  "26": "graphify reference: commit hook and native CLAUDE.md integration",
+  "27": "graphify reference: incremental update and cluster-only",
+  "28": "graphify reference: GitHub clone and cross-repo merge",
+  "29": "graphify reference: transcribe video and audio",
+  "30": "CLAUDE.md",
+  "31": "CLAUDE.md",
+  "32": "extraction-spec.md"
 }

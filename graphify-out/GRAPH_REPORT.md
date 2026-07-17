@@ -1,16 +1,16 @@
 # Graph Report - digimon  (2026-07-17)
 
 ## Corpus Check
-- 29 files · ~15,014 words
+- 41 files · ~25,828 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 288 nodes · 296 edges · 23 communities (20 shown, 3 thin omitted)
+- 355 nodes · 352 edges · 33 communities (25 shown, 8 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `0495b917`
+- Built from commit: `1d01c54c`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -35,18 +35,28 @@
 - MainActivity
 - digimon
 - make_icons.py
+- graphify reference: extra exports and benchmark
+- graphify reference: query, path, explain
+- graphify reference: add a URL and watch a folder
+- graphify reference: commit hook and native CLAUDE.md integration
+- graphify reference: incremental update and cluster-only
+- graphify reference: GitHub clone and cross-repo merge
+- graphify reference: transcribe video and audio
+- CLAUDE.md
+- CLAUDE.md
+- extraction-spec.md
 
 ## God Nodes (most connected - your core abstractions)
 1. `Digimon V-Pet Game — Design Document` - 14 edges
-2. `Digimon V-Pet Game Implementation Plan` - 10 edges
-3. `Digimon V-Pet — Progress Ledger` - 8 edges
-4. `Phase 4 Report — Local Notifications + Periodic Reminder` - 7 edges
-5. `Phase 1 — Core State Logic (pure, TDD)` - 7 edges
-6. `Verified sprite-sheet frame mapping (Task 2.1)` - 6 edges
-7. `Phase 1 — Core State Logic — Implementation Report` - 6 edges
-8. `Phase 2 — Game Rendering (Flame)` - 6 edges
-9. `PetComponent` - 4 edges
-10. `PetRepository` - 4 edges
+2. `What You Must Do When Invoked` - 12 edges
+3. `Digimon V-Pet — Progress Ledger` - 11 edges
+4. `/graphify` - 10 edges
+5. `Digimon V-Pet Game Implementation Plan` - 10 edges
+6. `graphify reference: extra exports and benchmark` - 8 edges
+7. `Phase 4 Report — Local Notifications + Periodic Reminder` - 7 edges
+8. `Phase 1 — Core State Logic (pure, TDD)` - 7 edges
+9. `Verified sprite-sheet frame mapping (Task 2.1)` - 6 edges
+10. `Phase 1 — Core State Logic — Implementation Report` - 6 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `_FakeRepo` --implements--> `PetRepository`  [EXTRACTED]
@@ -55,7 +65,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (23 total, 3 thin omitted)
+## Communities (33 total, 8 thin omitted)
 
 ### Community 0 - "Digimon V-Pet Game Implementation Plan"
 Cohesion: 0.07
@@ -66,12 +76,12 @@ Cohesion: 0.07
 Nodes (28): dart:ui, Future, _accum, _act, backgroundColor, clean, _deathNotified, feed (+20 more)
 
 ### Community 2 - "pet_component.dart"
-Cohesion: 0.09
-Nodes (21): HasGameReference, _currentStage, _loadGen, PetComponent, reactBounce, showFor, stageOf, frameSize (+13 more)
+Cohesion: 0.10
+Nodes (19): HasGameReference, _currentStage, _loadGen, PetComponent, reactBounce, showFor, stageOf, frameSize (+11 more)
 
 ### Community 3 - "game_config.dart"
-Cohesion: 0.09
-Nodes (22): careBumpClean, careBumpFeed, careBumpMedicine, careBumpPlay, careDecayOnSick, careDecayPerHungerPoint, careDecayPerPoop, careScoreThreshold (+14 more)
+Cohesion: 0.08
+Nodes (23): careBumpClean, careBumpFeed, careBumpMedicine, careBumpPlay, careDecayOnSick, careDecayPerHungerPoint, careDecayPerPoop, careScoreThreshold (+15 more)
 
 ### Community 4 - "vpet_game_test.dart"
 Cohesion: 0.11
@@ -82,8 +92,8 @@ Cohesion: 0.10
 Nodes (20): int?, careScore, copyWith, fromJson, happiness, happinessSinceMs, health, HealthStatus (+12 more)
 
 ### Community 6 - "home_screen.dart"
-Cohesion: 0.11
-Nodes (18): death_screen.dart, FlameGame, ../game/vpet_game.dart, VpetGame, _btn, build, _buttonRow, createState (+10 more)
+Cohesion: 0.07
+Nodes (29): death_screen.dart, FlameGame, ../game/vpet_game.dart, VpetGame, build, createState, DeathScreen, _DeathScreenState (+21 more)
 
 ### Community 7 - "main.dart"
 Cohesion: 0.12
@@ -102,16 +112,16 @@ Cohesion: 0.20
 Nodes (10): dart:convert, clear, _key, load, PetRepository, PrefsPetRepository, save, pet.dart (+2 more)
 
 ### Community 11 - "death_screen.dart"
-Cohesion: 0.22
-Nodes (10): build, createState, DeathScreen, _DeathScreenState, _restarting, HomeScreen, _HomeScreenState, State (+2 more)
+Cohesion: 0.08
+Nodes (24): For /graphify add and --watch, For /graphify query, For the commit hook and native CLAUDE.md integration, For --update and --cluster-only, /graphify, Honesty Rules, Interpreter guard for subcommands, Part A - Structural extraction for code files (+16 more)
 
 ### Community 12 - "notifications.dart"
 Cohesion: 0.22
 Nodes (8): cancelAll, init, _needsYouId, Notifications, _plugin, scheduleNeedsYou, package:flutter_local_notifications/flutter_local_notifications.dart, static const int
 
 ### Community 13 - "Digimon V-Pet — Progress Ledger"
-Cohesion: 0.22
-Nodes (8): BASE for Phase 2 review: 54bffc6, Digimon V-Pet — Progress Ledger, Minor findings deferred to final review, Phase 2 COMPLETE (reviewed + fixed + on-device verified), Phase 2 update (on-device verified), Phase 4 COMPLETE (reworked + verified), Status, Verified facts for downstream
+Cohesion: 0.17
+Nodes (11): ALL PHASES COMPLETE — dispatching final whole-branch review, BASE for Phase 2 review: 54bffc6, Digimon V-Pet — Progress Ledger, Final whole-branch review COMPLETE, Minor findings deferred to final review, Phase 2 COMPLETE (reviewed + fixed + on-device verified), Phase 2 update (on-device verified), Phase 4 COMPLETE (reworked + verified) (+3 more)
 
 ### Community 14 - "Phase 4 Report — Local Notifications + Periodic Reminder"
 Cohesion: 0.25
@@ -125,25 +135,45 @@ Nodes (6): Cross-stage reliable mapping (USE THIS), Decision for the MVP, NOT cr
 Cohesion: 0.29
 Nodes (6): Commits (Task order), Deviations from the plan and why, Files created, Final `flutter test` output summary, Phase 1 — Core State Logic — Implementation Report, Scope confirmation
 
+### Community 23 - "graphify reference: extra exports and benchmark"
+Cohesion: 0.22
+Nodes (8): graphify reference: extra exports and benchmark, Step 6b - Wiki (only if --wiki flag), Step 7 - Neo4j export (only if --neo4j or --neo4j-push flag), Step 7a - FalkorDB export (only if --falkordb or --falkordb-push flag), Step 7b - SVG export (only if --svg flag), Step 7c - GraphML export (only if --graphml flag), Step 7d - MCP server (only if --mcp flag), Step 8 - Token reduction benchmark (only if total_words > 5000)
+
+### Community 24 - "graphify reference: query, path, explain"
+Cohesion: 0.33
+Nodes (5): For /graphify explain, For /graphify path, graphify reference: query, path, explain, Step 0 — Constrained query expansion (REQUIRED before traversal), Step 1 — Traversal
+
+### Community 25 - "graphify reference: add a URL and watch a folder"
+Cohesion: 0.50
+Nodes (3): For /graphify add, For --watch, graphify reference: add a URL and watch a folder
+
+### Community 26 - "graphify reference: commit hook and native CLAUDE.md integration"
+Cohesion: 0.50
+Nodes (3): For git commit hook, For native CLAUDE.md integration, graphify reference: commit hook and native CLAUDE.md integration
+
+### Community 27 - "graphify reference: incremental update and cluster-only"
+Cohesion: 0.50
+Nodes (3): For --cluster-only, For --update (incremental re-extraction), graphify reference: incremental update and cluster-only
+
 ## Knowledge Gaps
-- **175 isolated node(s):** `_currentStage`, `_loadGen`, `stageOf`, `showFor`, `reactBounce` (+170 more)
+- **220 isolated node(s):** `_currentStage`, `_loadGen`, `stageOf`, `showFor`, `reactBounce` (+215 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **3 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **8 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `Pet` connect `vpet_game_test.dart` to `vpet_game.dart`, `pet.dart`?**
-  _High betweenness centrality (0.089) - this node is a cross-community bridge._
+  _High betweenness centrality (0.058) - this node is a cross-community bridge._
 - **Why does `PetRepository` connect `pet_repository.dart` to `vpet_game.dart`?**
-  _High betweenness centrality (0.070) - this node is a cross-community bridge._
+  _High betweenness centrality (0.046) - this node is a cross-community bridge._
 - **Why does `Notifications` connect `notifications.dart` to `home_screen.dart`?**
-  _High betweenness centrality (0.056) - this node is a cross-community bridge._
+  _High betweenness centrality (0.038) - this node is a cross-community bridge._
 - **What connects `_currentStage`, `_loadGen`, `stageOf` to the rest of the system?**
-  _175 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _220 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Digimon V-Pet Game Implementation Plan` be split into smaller, more focused modules?**
   _Cohesion score 0.06666666666666667 - nodes in this community are weakly interconnected._
 - **Should `vpet_game.dart` be split into smaller, more focused modules?**
   _Cohesion score 0.06896551724137931 - nodes in this community are weakly interconnected._
 - **Should `pet_component.dart` be split into smaller, more focused modules?**
-  _Cohesion score 0.08695652173913043 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.09523809523809523 - nodes in this community are weakly interconnected._
