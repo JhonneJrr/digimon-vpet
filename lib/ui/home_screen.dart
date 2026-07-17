@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
 import '../game/vpet_game.dart';
+import '../state/notifications.dart';
 import '../state/pet.dart';
 import '../state/pet_repository.dart';
 import 'death_screen.dart';
@@ -12,17 +13,40 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   late final VpetGame game;
+  final Notifications _notifications = Notifications();
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _notifications.init();
     game = VpetGame(repo: PrefsPetRepository())
       ..onPetChanged = () {
         if (mounted) setState(() {});
       }
       ..onDeath = _goToDeath;
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.paused:
+        _notifications.scheduleNeedsYou();
+        break;
+      case AppLifecycleState.resumed:
+        _notifications.cancelAll();
+        break;
+      default:
+        break;
+    }
   }
 
   void _goToDeath() {
