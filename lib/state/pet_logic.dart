@@ -1,51 +1,85 @@
 // lib/state/pet_logic.dart
+import 'dart:math' as math;
 import 'pet.dart';
 import 'game_config.dart';
 
 class PetLogic {
+  /// Advance the pet to wall-clock time [nowMs].
+  ///
+  /// Correct for BOTH a single large jump (app reopened after an absence) and
+  /// frequent small ticks (Flame timer while the app is open): each stat keeps
+  /// its own accumulation anchor, so sub-unit remainders are never lost.
   static Pet applyElapsed(Pet pet, int nowMs) {
-    if (pet.isDead || nowMs <= pet.lastTickMs) {
-      return pet.copyWith(lastTickMs: nowMs);
-    }
-    final elapsed = nowMs - pet.lastTickMs;
+    if (pet.isDead) return pet; // dead stats are frozen
 
-    // Hunger rises.
-    final hunger =
-        (pet.hunger + elapsed ~/ GameConfig.msPerHungerPoint).clamp(0, GameConfig.hungerMax);
-    // Happiness decays.
+    // --- hunger (rises) ---
+    final hGained = _units(pet.hungerSinceMs, nowMs, GameConfig.msPerHungerPoint);
+    final prevHunger = pet.hunger;
+    final hunger = (prevHunger + hGained).clamp(0, GameConfig.hungerMax);
+    final hungerSinceMs = pet.hungerSinceMs + hGained * GameConfig.msPerHungerPoint;
+
+    // --- happiness (decays) ---
+    final hapGained =
+        _units(pet.happinessSinceMs, nowMs, GameConfig.msPerHappinessDrop);
     final happiness =
-        (pet.happiness - elapsed ~/ GameConfig.msPerHappinessDrop).clamp(0, GameConfig.happinessMax);
-    // Poop accumulates.
-    final poopCount = pet.poopCount + elapsed ~/ GameConfig.msPerPoop;
+        (pet.happiness - hapGained).clamp(0, GameConfig.happinessMax);
+    final happinessSinceMs =
+        pet.happinessSinceMs + hapGained * GameConfig.msPerHappinessDrop;
 
-    // Track starving window.
+    // --- poop (accumulates) ---
+    final pGained = _units(pet.poopSinceMs, nowMs, GameConfig.msPerPoop);
+    final prevPoop = pet.poopCount;
+    final poopCount = prevPoop + pGained;
+    final poopSinceMs = pet.poopSinceMs + pGained * GameConfig.msPerPoop;
+
+    // --- starving window: when hunger first reached max ---
     int? starvingSinceMs = pet.starvingSinceMs;
     if (hunger >= GameConfig.hungerMax) {
-      starvingSinceMs ??= nowMs - (elapsed - GameConfig.msPerHungerPoint * GameConfig.hungerMax)
-          .clamp(0, elapsed);
+      if (starvingSinceMs == null) {
+        // Exact crossing = anchor + time to climb from prevHunger to max.
+        final crossing = pet.hungerSinceMs +
+            (GameConfig.hungerMax - prevHunger) * GameConfig.msPerHungerPoint;
+        starvingSinceMs = math.min(crossing, nowMs);
+      }
     } else {
       starvingSinceMs = null;
     }
 
-    // Sickness from prolonged starving or heavy mess.
-    var health = pet.health;
-    int? sickSinceMs = pet.sickSinceMs;
-    final starvedLongEnough = starvingSinceMs != null &&
-        nowMs - starvingSinceMs >= GameConfig.sickTimeoutMs;
-    final messyLongEnough = poopCount >= 3;
-    if (health == HealthStatus.healthy && (starvedLongEnough || messyLongEnough)) {
-      health = HealthStatus.sick;
-      // If triggered by prolonged starving, backdate sickSinceMs to the
-      // moment sickness actually began within this elapsed window (so a
-      // single large applyElapsed jump that also crosses deathTimeoutMs
-      // correctly marks the pet dead). Otherwise (mess-triggered), sickness
-      // begins now.
-      sickSinceMs = starvedLongEnough
-          ? starvingSinceMs + GameConfig.sickTimeoutMs
-          : nowMs;
+    // --- filth window: when poop first reached the threshold ---
+    int? messySinceMs = pet.messySinceMs;
+    if (poopCount >= GameConfig.messPoopThreshold) {
+      if (messySinceMs == null) {
+        final needed = (GameConfig.messPoopThreshold - prevPoop);
+        final crossing =
+            pet.poopSinceMs + math.max(0, needed) * GameConfig.msPerPoop;
+        messySinceMs = math.min(crossing, nowMs);
+      }
+    } else {
+      messySinceMs = null;
     }
 
-    // Death from untreated sickness.
+    // --- sickness: earliest neglect onset that has already elapsed ---
+    var health = pet.health;
+    int? sickSinceMs = pet.sickSinceMs;
+    var careScore = pet.careScore;
+    if (health == HealthStatus.healthy) {
+      final onsets = <int>[
+        if (starvingSinceMs != null) starvingSinceMs + GameConfig.sickTimeoutMs,
+        if (messySinceMs != null) messySinceMs + GameConfig.sickTimeoutMs,
+      ].where((o) => o <= nowMs);
+      if (onsets.isNotEmpty) {
+        health = HealthStatus.sick;
+        sickSinceMs = onsets.reduce(math.min);
+        careScore = _clamp01(careScore - GameConfig.careDecayOnSick);
+      }
+    }
+
+    // --- careScore decay from neglect that occurred this window ---
+    careScore = _clamp01(careScore -
+        GameConfig.careDecayPerHungerPoint * hGained -
+        GameConfig.careDecayPerPoop * pGained);
+
+    // --- death: sick and untreated past the death timeout ---
     var isDead = pet.isDead;
     if (health == HealthStatus.sick &&
         sickSinceMs != null &&
@@ -58,48 +92,107 @@ class PetLogic {
       happiness: happiness,
       poopCount: poopCount,
       health: health,
-      sickSinceMs: sickSinceMs,
+      careScore: careScore,
+      hungerSinceMs: hungerSinceMs,
+      happinessSinceMs: happinessSinceMs,
+      poopSinceMs: poopSinceMs,
       starvingSinceMs: starvingSinceMs,
       clearStarvingSince: starvingSinceMs == null,
+      messySinceMs: messySinceMs,
+      clearMessySince: messySinceMs == null,
+      sickSinceMs: sickSinceMs,
       isDead: isDead,
-      lastTickMs: nowMs,
     );
   }
 
-  static double _bump(double s, double d) => (s + d).clamp(0.0, 1.0);
+  /// Whole units elapsed from [sinceMs] to [nowMs] at [rateMs]. Returns 0 on a
+  /// backward or stalled clock so a hiccup never rewinds or double-counts.
+  static int _units(int sinceMs, int nowMs, int rateMs) =>
+      nowMs > sinceMs ? (nowMs - sinceMs) ~/ rateMs : 0;
 
-  static Pet feed(Pet p) =>
-      p.copyWith(hunger: (p.hunger - 1).clamp(0, GameConfig.hungerMax),
-                 careScore: _bump(p.careScore, 0.05));
+  static double _clamp01(double v) => v.clamp(0.0, 1.0);
 
-  static Pet clean(Pet p) =>
-      p.copyWith(poopCount: 0, careScore: _bump(p.careScore, 0.05));
+  static double _bump(double s, double d) => _clamp01(s + d);
 
-  static Pet giveMedicine(Pet p) => p.health == HealthStatus.sick
-      ? p.copyWith(health: HealthStatus.healthy, clearSickSince: true,
-                   careScore: _bump(p.careScore, 0.1))
-      : p;
+  // --- care actions (no-ops on a dead pet; its stats are frozen) ---
 
-  static Pet play(Pet p) =>
-      p.copyWith(happiness: (p.happiness + 1).clamp(0, GameConfig.happinessMax),
-                 careScore: _bump(p.careScore, 0.05));
+  static Pet feed(Pet p) {
+    if (p.isDead) return p;
+    final hunger = (p.hunger - 1).clamp(0, GameConfig.hungerMax);
+    return p.copyWith(
+      hunger: hunger,
+      // Reset the anchor so the fed-down value starts a fresh accumulation.
+      hungerSinceMs: p.hungerSinceMs,
+      careScore: _bump(p.careScore, GameConfig.careBumpFeed),
+      // Below max again -> no longer starving.
+      clearStarvingSince: hunger < GameConfig.hungerMax,
+    );
+  }
 
+  static Pet clean(Pet p) {
+    if (p.isDead) return p;
+    return p.copyWith(
+      poopCount: 0,
+      clearMessySince: true,
+      careScore: _bump(p.careScore, GameConfig.careBumpClean),
+    );
+  }
+
+  static Pet giveMedicine(Pet p) {
+    if (p.isDead) return p;
+    return p.health == HealthStatus.sick
+        ? p.copyWith(
+            health: HealthStatus.healthy,
+            clearSickSince: true,
+            careScore: _bump(p.careScore, GameConfig.careBumpMedicine),
+          )
+        : p;
+  }
+
+  static Pet play(Pet p) {
+    if (p.isDead) return p;
+    return p.copyWith(
+      happiness: (p.happiness + 1).clamp(0, GameConfig.happinessMax),
+      careScore: _bump(p.careScore, GameConfig.careBumpPlay),
+    );
+  }
+
+  /// Advance through as many stage thresholds as [nowMs] has crossed, starting
+  /// each new stage's clock at the instant its predecessor's requirement was
+  /// met (not the arbitrary check time), so infrequent polling never strands
+  /// the pet a stage behind.
   static Pet checkEvolution(Pet p, int nowMs) {
-    final dur = GameConfig.stageDurationMs[p.stage];
-    if (dur == null || p.isDead) return p; // perfect stages have no duration
-    if (nowMs - p.stageStartedAtMs < dur) return p;
-    late LifeStage next;
-    switch (p.stage) {
-      case LifeStage.baby1: next = LifeStage.baby2; break;
-      case LifeStage.baby2: next = LifeStage.child; break;
-      case LifeStage.child: next = LifeStage.adult; break;
+    if (p.isDead) return p;
+    var stage = p.stage;
+    var startedAt = p.stageStartedAtMs;
+    while (true) {
+      final dur = GameConfig.stageDurationMs[stage];
+      if (dur == null) break; // perfect stages have no further duration
+      if (nowMs - startedAt < dur) break;
+      final next = _nextStage(stage, p.careScore);
+      if (next == null) break;
+      startedAt += dur;
+      stage = next;
+    }
+    if (stage == p.stage && startedAt == p.stageStartedAtMs) return p;
+    return p.copyWith(stage: stage, stageStartedAtMs: startedAt);
+  }
+
+  static LifeStage? _nextStage(LifeStage stage, double careScore) {
+    switch (stage) {
+      case LifeStage.baby1:
+        return LifeStage.baby2;
+      case LifeStage.baby2:
+        return LifeStage.child;
+      case LifeStage.child:
+        return LifeStage.adult;
       case LifeStage.adult:
-        next = p.careScore >= GameConfig.careScoreThreshold
+        return careScore >= GameConfig.careScoreThreshold
             ? LifeStage.perfectMetal
             : LifeStage.perfectSkull;
-        break;
-      default: return p;
+      case LifeStage.perfectMetal:
+      case LifeStage.perfectSkull:
+        return null;
     }
-    return p.copyWith(stage: next, stageStartedAtMs: nowMs);
   }
 }

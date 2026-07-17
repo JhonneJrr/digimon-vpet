@@ -2,19 +2,35 @@
 import 'game_config.dart';
 
 enum LifeStage { baby1, baby2, child, adult, perfectMetal, perfectSkull }
+
 enum HealthStatus { healthy, sick }
 
+/// Immutable pet state.
+///
+/// Time-driven stats (hunger, happiness, poop) each carry their own "since"
+/// anchor timestamp — the instant from which the next whole unit is measured.
+/// applyElapsed advances an anchor only by the whole units it actually
+/// consumed, so sub-unit remainders survive across many small ticks (a 1s
+/// Flame tick no longer silently rounds to zero).
 class Pet {
   final LifeStage stage;
-  final int hunger;        // 0 = full .. hungerMax = starving
-  final int happiness;     // 0 = sad .. happinessMax = happy
+  final int hunger; // 0 = full .. hungerMax = starving
+  final int happiness; // 0 = sad .. happinessMax = happy
   final int poopCount;
   final HealthStatus health;
-  final double careScore;  // 0..1, decides Metal vs Skull
+  final double careScore; // 0..1, decides Metal vs Skull
   final int stageStartedAtMs;
-  final int lastTickMs;
-  final int? sickSinceMs;
-  final int? starvingSinceMs;
+
+  // Per-stat accumulation anchors.
+  final int hungerSinceMs;
+  final int happinessSinceMs;
+  final int poopSinceMs;
+
+  // Neglect / illness event timestamps (null = not currently in that state).
+  final int? starvingSinceMs; // when hunger first reached max
+  final int? messySinceMs; // when poop first reached messPoopThreshold
+  final int? sickSinceMs; // when sickness onset
+
   final bool isDead;
 
   const Pet({
@@ -25,9 +41,12 @@ class Pet {
     required this.health,
     required this.careScore,
     required this.stageStartedAtMs,
-    required this.lastTickMs,
-    this.sickSinceMs,
+    required this.hungerSinceMs,
+    required this.happinessSinceMs,
+    required this.poopSinceMs,
     this.starvingSinceMs,
+    this.messySinceMs,
+    this.sickSinceMs,
     this.isDead = false,
   });
 
@@ -39,7 +58,9 @@ class Pet {
         health: HealthStatus.healthy,
         careScore: 0.5,
         stageStartedAtMs: nowMs,
-        lastTickMs: nowMs,
+        hungerSinceMs: nowMs,
+        happinessSinceMs: nowMs,
+        poopSinceMs: nowMs,
       );
 
   Pet copyWith({
@@ -50,11 +71,15 @@ class Pet {
     HealthStatus? health,
     double? careScore,
     int? stageStartedAtMs,
-    int? lastTickMs,
-    int? sickSinceMs,
-    bool clearSickSince = false,
+    int? hungerSinceMs,
+    int? happinessSinceMs,
+    int? poopSinceMs,
     int? starvingSinceMs,
     bool clearStarvingSince = false,
+    int? messySinceMs,
+    bool clearMessySince = false,
+    int? sickSinceMs,
+    bool clearSickSince = false,
     bool? isDead,
   }) =>
       Pet(
@@ -65,10 +90,14 @@ class Pet {
         health: health ?? this.health,
         careScore: careScore ?? this.careScore,
         stageStartedAtMs: stageStartedAtMs ?? this.stageStartedAtMs,
-        lastTickMs: lastTickMs ?? this.lastTickMs,
-        sickSinceMs: clearSickSince ? null : (sickSinceMs ?? this.sickSinceMs),
+        hungerSinceMs: hungerSinceMs ?? this.hungerSinceMs,
+        happinessSinceMs: happinessSinceMs ?? this.happinessSinceMs,
+        poopSinceMs: poopSinceMs ?? this.poopSinceMs,
         starvingSinceMs:
             clearStarvingSince ? null : (starvingSinceMs ?? this.starvingSinceMs),
+        messySinceMs:
+            clearMessySince ? null : (messySinceMs ?? this.messySinceMs),
+        sickSinceMs: clearSickSince ? null : (sickSinceMs ?? this.sickSinceMs),
         isDead: isDead ?? this.isDead,
       );
 
@@ -80,9 +109,12 @@ class Pet {
         'health': health.index,
         'careScore': careScore,
         'stageStartedAtMs': stageStartedAtMs,
-        'lastTickMs': lastTickMs,
-        'sickSinceMs': sickSinceMs,
+        'hungerSinceMs': hungerSinceMs,
+        'happinessSinceMs': happinessSinceMs,
+        'poopSinceMs': poopSinceMs,
         'starvingSinceMs': starvingSinceMs,
+        'messySinceMs': messySinceMs,
+        'sickSinceMs': sickSinceMs,
         'isDead': isDead,
       };
 
@@ -94,9 +126,12 @@ class Pet {
         health: HealthStatus.values[j['health'] as int],
         careScore: (j['careScore'] as num).toDouble(),
         stageStartedAtMs: j['stageStartedAtMs'] as int,
-        lastTickMs: j['lastTickMs'] as int,
-        sickSinceMs: j['sickSinceMs'] as int?,
+        hungerSinceMs: j['hungerSinceMs'] as int,
+        happinessSinceMs: j['happinessSinceMs'] as int,
+        poopSinceMs: j['poopSinceMs'] as int,
         starvingSinceMs: j['starvingSinceMs'] as int?,
+        messySinceMs: j['messySinceMs'] as int?,
+        sickSinceMs: j['sickSinceMs'] as int?,
         isDead: j['isDead'] as bool,
       );
 }
