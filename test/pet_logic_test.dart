@@ -145,6 +145,32 @@ void main() {
     });
   });
 
+  group('needsAttention', () {
+    test('a fresh, healthy pet does not need attention', () {
+      expect(PetLogic.needsAttention(Pet.newborn(0)), false);
+    });
+    test('starving, filthy, or sick each need attention', () {
+      final base = Pet.newborn(0);
+      expect(
+          PetLogic.needsAttention(base.copyWith(hunger: GameConfig.hungerMax)),
+          true);
+      expect(
+          PetLogic.needsAttention(
+              base.copyWith(poopCount: GameConfig.messPoopThreshold)),
+          true);
+      expect(PetLogic.needsAttention(base.copyWith(health: HealthStatus.sick)),
+          true);
+    });
+    test('a dead pet never needs attention', () {
+      final dead = Pet.newborn(0).copyWith(
+        isDead: true,
+        hunger: GameConfig.hungerMax,
+        health: HealthStatus.sick,
+      );
+      expect(PetLogic.needsAttention(dead), false);
+    });
+  });
+
   group('evolution', () {
     test('baby1 evolves to baby2 after its duration', () {
       final p = Pet.newborn(0);

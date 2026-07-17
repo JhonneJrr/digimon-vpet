@@ -37,15 +37,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    switch (state) {
-      case AppLifecycleState.paused:
-        _notifications.scheduleNeedsYou();
-        break;
-      case AppLifecycleState.resumed:
-        _notifications.cancelAll();
-        break;
-      default:
-        break;
+    // Reminders are posted by the background workmanager task (which reliably
+    // runs in its own isolate), NOT from here: calling the notification plugin
+    // during `paused` gets deferred by the engine until the app resumes, which
+    // is both unreliable and pointless. On resume we just clear any reminder
+    // the player has now answered by opening the app.
+    if (state == AppLifecycleState.resumed) {
+      _notifications.cancelAll();
     }
   }
 

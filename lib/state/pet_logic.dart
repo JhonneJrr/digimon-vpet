@@ -114,6 +114,15 @@ class PetLogic {
 
   static double _bump(double s, double d) => _clamp01(s + d);
 
+  /// True when the (living) pet is in a state worth a "come back" reminder:
+  /// starving, living in filth, or sick. Used by the background reminder task
+  /// so a well-tended pet never nags the player.
+  static bool needsAttention(Pet p) =>
+      !p.isDead &&
+      (p.hunger >= GameConfig.hungerMax ||
+          p.poopCount >= GameConfig.messPoopThreshold ||
+          p.health == HealthStatus.sick);
+
   // --- care actions (no-ops on a dead pet; its stats are frozen) ---
 
   static Pet feed(Pet p) {
