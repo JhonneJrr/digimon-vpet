@@ -4,10 +4,13 @@ import 'package:flame/cache.dart';
 import 'package:flame/components.dart' show Anchor, Vector2;
 import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart';
+import '../state/biome.dart';
 import '../state/pet.dart';
 import '../state/pet_logic.dart';
 import '../state/pet_repository.dart';
+import 'biome_palette.dart';
 import 'pet_component.dart';
+import 'world_background.dart';
 
 /// Top-level Flame game: owns the [Pet] state, ticks it forward once per
 /// second while running, persists it, and renders it via [PetComponent].
@@ -25,6 +28,10 @@ class VpetGame extends FlameGame {
   final PetRepository repo;
   final int Function() _clock;
   final PetComponent petComponent = PetComponent();
+  // Named `worldBackground`, not `world`: FlameGame already defines a `world`
+  // member (the camera's `World` component), and this is a plain background
+  // component, not a Flame `World` subclass.
+  final WorldBackground worldBackground = WorldBackground();
 
   late Pet pet;
 
@@ -44,6 +51,8 @@ class VpetGame extends FlameGame {
 
   int nowMs() => _clock();
 
+  Biome get currentBiome => biomeForStage(pet.stage);
+
   @override
   Color backgroundColor() => const Color(0xFF9BBC0F); // LCD green, matches UI
 
@@ -52,22 +61,33 @@ class VpetGame extends FlameGame {
     final saved = await repo.load();
     pet = saved ?? Pet.newborn(nowMs());
     pet = PetLogic.checkEvolution(PetLogic.applyElapsed(pet, nowMs()), nowMs());
-    petComponent.anchor = Anchor.center;
-    petComponent.position = size / 2;
+
+    worldBackground.priority = -1; // behind everything
+    await add(worldBackground);
+    worldBackground.applyPalette(paletteForBiome(currentBiome));
+
+    petComponent.anchor = Anchor.bottomCenter;
+    petComponent.position = _petFootPosition();
+    petComponent.priority = 10;
     // Attach to the tree before showFor(): PetComponent's HasGameReference
     // resolves `game` via the parent chain, which only exists once added.
     add(petComponent);
     await petComponent.showFor(pet);
+    petComponent.startIdlePulse();
+
     isReady = true;
     await _persistAndNotify();
   }
 
+  /// The pet's feet rest just above the ground horizon line.
+  Vector2 _petFootPosition() =>
+      Vector2(size.x / 2, size.y * (1 - groundTopFraction) + 6);
+
   @override
   void onGameResize(Vector2 size) {
     super.onGameResize(size);
-    // Keep the pet centred across rotation / window-size changes.
     if (petComponent.isMounted) {
-      petComponent.position = size / 2;
+      petComponent.position = _petFootPosition();
     }
   }
 
@@ -79,6 +99,7 @@ class VpetGame extends FlameGame {
     if (_accum >= 1.0) {
       _accum = 0;
       pet = PetLogic.checkEvolution(PetLogic.applyElapsed(pet, nowMs()), nowMs());
+      worldBackground.applyPalette(paletteForBiome(currentBiome));
       petComponent.showFor(pet);
       _persistAndNotify();
     }
@@ -117,6 +138,7 @@ class VpetGame extends FlameGame {
 
   Future<void> restart() async {
     pet = Pet.newborn(nowMs());
+    worldBackground.applyPalette(paletteForBiome(currentBiome));
     await petComponent.showFor(pet);
     await _persistAndNotify();
   }

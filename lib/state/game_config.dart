@@ -8,6 +8,9 @@ class GameConfig {
   static const int hungerMax = 4;
   static const int happinessMax = 4;
 
+  /// Happiness at/below which the UI shows the "sad" status badge.
+  static const int happinessWarnThreshold = 1;
+
   /// Hunger at/above which the UI shows the hunger warning icon (before the
   /// pet is fully starving at [hungerMax]).
   static const int hungerWarnThreshold = 3;

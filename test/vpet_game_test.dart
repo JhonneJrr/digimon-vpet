@@ -2,6 +2,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flame/game.dart';
 import 'package:digimon/game/vpet_game.dart';
+import 'package:digimon/state/biome.dart';
 import 'package:digimon/state/pet.dart';
 import 'package:digimon/state/pet_repository.dart';
 
@@ -78,5 +79,26 @@ void main() {
     expect(game.pet.isDead, false);
     expect(game.pet.hunger, 0);
     expect(game.pet.stage, LifeStage.baby1);
+  });
+
+  test('world is present and pet stands on the ground line after load', () async {
+    final game = VpetGame(repo: _FakeRepo(), clock: () => 0);
+    // Mirror exactly what GameWidget's loader does (game_widget.dart):
+    // resize -> load -> mount -> first update(0). Without `mount()`, the
+    // root itself is never marked mounted, so children added during
+    // onLoad() stay staged and Flame's own component-tree walk visits them
+    // (and their nested effects) before their onMount() has run.
+    game.onGameResize(Vector2(400, 600));
+    await game.onLoad();
+    // `mount()` is @internal to Flame; GameWidget calls it in exactly this
+    // spot (game_widget.dart) and there's no public substitute for a
+    // headless test that needs the tree actually mounted (not just staged).
+    // ignore: invalid_use_of_internal_member
+    game.mount();
+    game.update(0);
+    expect(game.worldBackground.isMounted, isTrue);
+    expect(game.currentBiome, Biome.nursery); // newborn = baby1
+    // Pet anchored to its feet, below vertical center (on the ground band).
+    expect(game.petComponent.position.y, greaterThan(game.size.y / 2));
   });
 }
