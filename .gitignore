@@ -54,3 +54,7 @@ graphify-out/20*/
 
 # brainstorming visual companion session files
 .superpowers/brainstorm/
+
+# reverse-engineered old game (Digital Tamers Reborn) — 200MB exe + extracted
+# assets (third-party IP): keep local for reference, never commit.
+para estudo reborn/
