@@ -27,6 +27,7 @@ class VpetGame extends FlameGame {
 
   late Pet pet;
   double _accum = 0;
+  bool _deathNotified = false;
   VoidCallback? onPetChanged;
   VoidCallback? onDeath;
 
@@ -62,7 +63,15 @@ class VpetGame extends FlameGame {
   Future<void> _persistAndNotify() async {
     await repo.save(pet);
     onPetChanged?.call();
-    if (pet.isDead) onDeath?.call();
+    // Only fire once per death: care-action button taps still reach _act()
+    // for a dead pet (each PetLogic action is a no-op on it) and would
+    // otherwise re-trigger navigation to DeathScreen on every tap.
+    if (pet.isDead && !_deathNotified) {
+      _deathNotified = true;
+      onDeath?.call();
+    } else if (!pet.isDead) {
+      _deathNotified = false;
+    }
   }
 
   Future<void> _act(Pet Function(Pet) action) async {
