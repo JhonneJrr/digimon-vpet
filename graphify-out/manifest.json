@@ -1,0 +1,307 @@
+{
+  "android/app/build.gradle.kts": {
+    "mtime": 1784265801.6257489,
+    "ast_hash": "51605e102ebee051eed77275cafe562b",
+    "semantic_hash": ""
+  },
+  "android/app/src/main/kotlin/com/digimon/vpet/digimon/MainActivity.kt": {
+    "mtime": 1784261950.5687628,
+    "ast_hash": "55c6d226ef352b8c280d2f8064624f1e",
+    "semantic_hash": ""
+  },
+  "android/build.gradle.kts": {
+    "mtime": 1784261950.5687628,
+    "ast_hash": "803fe22651fbe96ed401eb0b66a492d1",
+    "semantic_hash": ""
+  },
+  "android/settings.gradle.kts": {
+    "mtime": 1784261950.6080654,
+    "ast_hash": "087a01c04d081ae02a8e5db89f4bf3f3",
+    "semantic_hash": ""
+  },
+  "lib/game/pet_component.dart": {
+    "mtime": 1784267264.9111166,
+    "ast_hash": "0e5de42a4a607ec8eb52a3e64cf5c2f2",
+    "semantic_hash": ""
+  },
+  "lib/game/sprite_map.dart": {
+    "mtime": 1784269966.9226727,
+    "ast_hash": "f07ea6a5acfddbaadf02ee28795df42b",
+    "semantic_hash": ""
+  },
+  "lib/game/vpet_game.dart": {
+    "mtime": 1784269872.0759475,
+    "ast_hash": "d605e7b1aa53c37048d9a9bceb741843",
+    "semantic_hash": ""
+  },
+  "lib/main.dart": {
+    "mtime": 1784270023.2711625,
+    "ast_hash": "a0950926ef43c03a17c1f948178a1a80",
+    "semantic_hash": ""
+  },
+  "lib/state/background.dart": {
+    "mtime": 1784268912.1568432,
+    "ast_hash": "ebb2e64003bff359d484aa1afc2aa769",
+    "semantic_hash": ""
+  },
+  "lib/state/game_config.dart": {
+    "mtime": 1784269934.5107405,
+    "ast_hash": "bb746d182705c166f9b55f8b6a21630b",
+    "semantic_hash": ""
+  },
+  "lib/state/notifications.dart": {
+    "mtime": 1784268121.9399102,
+    "ast_hash": "aa5ff0bacd81fccfcb813e0f7b82653f",
+    "semantic_hash": ""
+  },
+  "lib/state/pet.dart": {
+    "mtime": 1784263494.8032048,
+    "ast_hash": "8186395849e0f03c3741f4d622099f92",
+    "semantic_hash": ""
+  },
+  "lib/state/pet_logic.dart": {
+    "mtime": 1784269865.5234303,
+    "ast_hash": "cac83c291ee420671c8b24eb97c5e4af",
+    "semantic_hash": ""
+  },
+  "lib/state/pet_repository.dart": {
+    "mtime": 1784262499.381446,
+    "ast_hash": "8aac30d14b46fbdf7ee917900fc751bf",
+    "semantic_hash": ""
+  },
+  "lib/ui/death_screen.dart": {
+    "mtime": 1784267278.0309412,
+    "ast_hash": "89d131684b751eb61f25b87f9d4a0960",
+    "semantic_hash": ""
+  },
+  "lib/ui/home_screen.dart": {
+    "mtime": 1784269950.0367675,
+    "ast_hash": "8d87ee65e62ca84ca01bec496868a3d1",
+    "semantic_hash": ""
+  },
+  "scripts/make_icons.py": {
+    "mtime": 1784262855.6335218,
+    "ast_hash": "f603b8bd94cdb559f1551727b09258b6",
+    "semantic_hash": ""
+  },
+  "test/death_screen_test.dart": {
+    "mtime": 1784267326.010854,
+    "ast_hash": "e20a329aa3d651736ac34b6fed44a079",
+    "semantic_hash": ""
+  },
+  "test/pet_component_test.dart": {
+    "mtime": 1784263977.7695098,
+    "ast_hash": "4c7f1226f79c69f41acef6ebc4944b77",
+    "semantic_hash": ""
+  },
+  "test/pet_logic_test.dart": {
+    "mtime": 1784269924.0931516,
+    "ast_hash": "e62d71ca5d182587f2be3f7cb6385fcf",
+    "semantic_hash": ""
+  },
+  "test/pet_repository_test.dart": {
+    "mtime": 1784262486.41113,
+    "ast_hash": "aedb1a872c395da7cad53853cd775c98",
+    "semantic_hash": ""
+  },
+  "test/vpet_game_test.dart": {
+    "mtime": 1784267514.3564305,
+    "ast_hash": "c06fef55a2b63da765133fc8b7af0e5a",
+    "semantic_hash": ""
+  },
+  ".superpowers/sdd/progress.md": {
+    "mtime": 1784270122.1821744,
+    "ast_hash": "ea08b18a236fd6058910b1569cf326c5",
+    "semantic_hash": ""
+  },
+  ".superpowers/sdd/sprite-mapping-verified.md": {
+    "mtime": 1784262782.4690983,
+    "ast_hash": "7bf818fe45f409269c7d6ce7103d30d0",
+    "semantic_hash": ""
+  },
+  ".superpowers/sdd/task-phase1-report.md": {
+    "mtime": 1784262566.9520123,
+    "ast_hash": "bdee287a1b33a21af0ed9eb4fa719793",
+    "semantic_hash": ""
+  },
+  ".superpowers/sdd/task-phase4-report.md": {
+    "mtime": 1784268272.305651,
+    "ast_hash": "cf3748369ef96e15f0e0e57fb07691a7",
+    "semantic_hash": ""
+  },
+  "README.md": {
+    "mtime": 1784261950.615819,
+    "ast_hash": "d75a2fc8e3fc8bff56cf387cfa68774c",
+    "semantic_hash": ""
+  },
+  "analysis_options.yaml": {
+    "mtime": 1784261950.5527253,
+    "ast_hash": "9e65f4b9beebb674c0dc252f70a5c177",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-07-17-digimon-vpet-game.md": {
+    "mtime": 1784260136.2977552,
+    "ast_hash": "7139e94a4b3a6196320a49a1aa242ed1",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-07-17-digimon-vpet-game-design.md": {
+    "mtime": 1784259600.156174,
+    "ast_hash": "099e751d7d0d2526787ea778278f1704",
+    "semantic_hash": ""
+  },
+  "pubspec.yaml": {
+    "mtime": 1784262071.7218559,
+    "ast_hash": "e8efcbf1c75ac6a6900a628a913db0d9",
+    "semantic_hash": ""
+  },
+  "android/app/src/main/res/mipmap-hdpi/ic_launcher.png": {
+    "mtime": 1783606302.0,
+    "ast_hash": "13e9c72ec37fac220397aa819fa1ef2d",
+    "semantic_hash": ""
+  },
+  "android/app/src/main/res/mipmap-mdpi/ic_launcher.png": {
+    "mtime": 1783606302.0,
+    "ast_hash": "6270344430679711b81476e29878caa7",
+    "semantic_hash": ""
+  },
+  "android/app/src/main/res/mipmap-xhdpi/ic_launcher.png": {
+    "mtime": 1783606302.0,
+    "ast_hash": "a0a8db5985280b3679d99a820ae2db79",
+    "semantic_hash": ""
+  },
+  "android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png": {
+    "mtime": 1783606302.0,
+    "ast_hash": "afe1b655b9f32da22f9a4301bb8e6ba8",
+    "semantic_hash": ""
+  },
+  "android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png": {
+    "mtime": 1783606302.0,
+    "ast_hash": "57838d52c318faff743130c3fcfae0c6",
+    "semantic_hash": ""
+  },
+  "assets/sprites/Agumon.png": {
+    "mtime": 1784257199.6222155,
+    "ast_hash": "0897a554a098cc74e50259ed4f0dbe7a",
+    "semantic_hash": ""
+  },
+  "assets/sprites/Botamon.png": {
+    "mtime": 1784257195.4864998,
+    "ast_hash": "ba4eb9dfe0434ecb821bce23e384e71c",
+    "semantic_hash": ""
+  },
+  "assets/sprites/Greymon.png": {
+    "mtime": 1784257201.8017836,
+    "ast_hash": "d0078738da43f55b40ef38c6b9803460",
+    "semantic_hash": ""
+  },
+  "assets/sprites/Koromon.png": {
+    "mtime": 1784257203.8894732,
+    "ast_hash": "0a0a70fae3d3e2452d3a9be5166320a2",
+    "semantic_hash": ""
+  },
+  "assets/sprites/MetalGreymon.png": {
+    "mtime": 1784257197.5066414,
+    "ast_hash": "67214b58cfa07ad7e5b3ee4fd5cb5509",
+    "semantic_hash": ""
+  },
+  "assets/sprites/SkullGreymon.png": {
+    "mtime": 1784257206.038968,
+    "ast_hash": "0135c0c44d14bf01a2829c7e9c59d224",
+    "semantic_hash": ""
+  },
+  "assets/ui/clean.png": {
+    "mtime": 1784262861.5437374,
+    "ast_hash": "33dd03182e8ab87026c3a75562a3b34a",
+    "semantic_hash": ""
+  },
+  "assets/ui/food.png": {
+    "mtime": 1784262861.539736,
+    "ast_hash": "fb0333fe875efb16f89e3dab73b5e9b2",
+    "semantic_hash": ""
+  },
+  "assets/ui/heart.png": {
+    "mtime": 1784262861.5377362,
+    "ast_hash": "9fe7e5357b6066a1475ebd344dc966f2",
+    "semantic_hash": ""
+  },
+  "assets/ui/hunger.png": {
+    "mtime": 1784262861.540736,
+    "ast_hash": "84a3c27aa2c7380714c152d7ca33a394",
+    "semantic_hash": ""
+  },
+  "assets/ui/medicine.png": {
+    "mtime": 1784262861.5447392,
+    "ast_hash": "4fe083d727dee8e85dd6bdf10d870d7e",
+    "semantic_hash": ""
+  },
+  "assets/ui/poop.png": {
+    "mtime": 1784262861.5417392,
+    "ast_hash": "56caeb17beda4ddefdb5c6f93b0ef420",
+    "semantic_hash": ""
+  },
+  "assets/ui/skull.png": {
+    "mtime": 1784262861.545738,
+    "ast_hash": "6e90ea185b983b16e7184db2b80d6ac3",
+    "semantic_hash": ""
+  },
+  ".claude/settings.json": {
+    "mtime": 1784269171.6433241,
+    "ast_hash": "1cfe068865df8f43a39f0cb65bbc9170",
+    "semantic_hash": ""
+  },
+  ".claude/CLAUDE.md": {
+    "mtime": 1784269171.629322,
+    "ast_hash": "c232166e6492ba1ed955030b16979b05",
+    "semantic_hash": ""
+  },
+  ".claude/skills/graphify/SKILL.md": {
+    "mtime": 1784269171.626321,
+    "ast_hash": "4c3f621c5b36560c2c5a0c303e2784cd",
+    "semantic_hash": ""
+  },
+  ".claude/skills/graphify/references/add-watch.md": {
+    "mtime": 1784259130.9268205,
+    "ast_hash": "d59d027fe449f06aa03905a01184e779",
+    "semantic_hash": ""
+  },
+  ".claude/skills/graphify/references/exports.md": {
+    "mtime": 1784259130.9338727,
+    "ast_hash": "9da2a2152e60a22f07f05fed5158f287",
+    "semantic_hash": ""
+  },
+  ".claude/skills/graphify/references/extraction-spec.md": {
+    "mtime": 1784259130.935873,
+    "ast_hash": "42fef56a01698118f7fd722acdadea34",
+    "semantic_hash": ""
+  },
+  ".claude/skills/graphify/references/github-and-merge.md": {
+    "mtime": 1784259130.937386,
+    "ast_hash": "cde13df085e4c492aeb7ba298a996d0d",
+    "semantic_hash": ""
+  },
+  ".claude/skills/graphify/references/hooks.md": {
+    "mtime": 1784259130.9454393,
+    "ast_hash": "3f545db6ce646650bb9de588f5512a27",
+    "semantic_hash": ""
+  },
+  ".claude/skills/graphify/references/query.md": {
+    "mtime": 1784259130.947441,
+    "ast_hash": "3c46f8ad006874260614ed8657d02307",
+    "semantic_hash": ""
+  },
+  ".claude/skills/graphify/references/transcribe.md": {
+    "mtime": 1784259130.949969,
+    "ast_hash": "67b6a5fa6c0974e18f60db9f8932fbd8",
+    "semantic_hash": ""
+  },
+  ".claude/skills/graphify/references/update.md": {
+    "mtime": 1784259130.9514964,
+    "ast_hash": "c698309979460d0f02ba616417844399",
+    "semantic_hash": ""
+  },
+  "CLAUDE.md": {
+    "mtime": 1784269171.6313224,
+    "ast_hash": "8a6643a420fdad6bfb583523bc6cef16",
+    "semantic_hash": ""
+  }
+}

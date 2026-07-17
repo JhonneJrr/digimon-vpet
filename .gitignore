@@ -43,3 +43,11 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# graphify regenerable cache
+graphify-out/cache/
+
+# SDD transient scratch (review diffs, agent reports) and graphify date wikis
+.superpowers/sdd/*.diff
+.superpowers/sdd/task-*-report.md
+graphify-out/20*/
