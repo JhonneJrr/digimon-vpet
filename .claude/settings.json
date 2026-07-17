@@ -6,7 +6,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "graphify hook-guard search"
+            "shell": "bash",
+            "command": "\"/c/Users/felip/AppData/Roaming/Python/Python314/Scripts/graphify.exe\" hook-guard search 2>/dev/null || true"
           }
         ]
       },
@@ -15,7 +16,22 @@
         "hooks": [
           {
             "type": "command",
-            "command": "graphify hook-guard read"
+            "shell": "bash",
+            "command": "\"/c/Users/felip/AppData/Roaming/Python/Python314/Scripts/graphify.exe\" hook-guard read 2>/dev/null || true"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "shell": "bash",
+            "async": true,
+            "statusMessage": "Updating graphify code graph...",
+            "command": "grep -q \"\\.dart\" && \"/c/Users/felip/AppData/Roaming/Python/Python314/Scripts/graphify.exe\" update \"C:/Users/felip/Documents/digimon\" >/dev/null 2>&1 || true"
           }
         ]
       }
