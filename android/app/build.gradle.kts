@@ -33,9 +33,20 @@ android {
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
+            // Signing with the debug keys so the app installs on any device
+            // (fine for personal/sideload builds; not for Play Store).
             signingConfig = signingConfigs.getByName("debug")
+
+            // Disable R8 code shrinking/obfuscation for release. WorkManager
+            // (via the workmanager plugin) instantiates androidx.work's Room
+            // database `WorkDatabase_Impl` by REFLECTION at startup; R8 was
+            // stripping/renaming it, so the app crashed on launch with
+            // `NoSuchMethodException: WorkDatabase_Impl.<init>`. Turning
+            // shrinking off removes that whole class of reflection-strip
+            // crashes (also protects flutter_local_notifications' Gson use).
+            // The app is tiny, so the size cost is negligible.
+            isMinifyEnabled = false
+            isShrinkResources = false
         }
     }
 }
