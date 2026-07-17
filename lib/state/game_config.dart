@@ -8,6 +8,10 @@ class GameConfig {
   static const int hungerMax = 4;
   static const int happinessMax = 4;
 
+  /// Hunger at/above which the UI shows the hunger warning icon (before the
+  /// pet is fully starving at [hungerMax]).
+  static const int hungerWarnThreshold = 3;
+
   // Base (real-time) rates, divided by gameSpeed to accelerate.
   static int get msPerHungerPoint => (60 * 1000 ~/ gameSpeed); // hunger +1
   static int get msPerHappinessDrop => (90 * 1000 ~/ gameSpeed); // happiness -1

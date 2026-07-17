@@ -103,8 +103,8 @@ class VpetGame extends FlameGame {
     return save;
   }
 
-  Future<void> _act(Pet Function(Pet) action) async {
-    pet = action(pet);
+  Future<void> _act(Pet Function(Pet, int) action) async {
+    pet = action(pet, nowMs());
     await petComponent.showFor(pet);
     petComponent.reactBounce();
     await _persistAndNotify();

@@ -124,31 +124,38 @@ class PetLogic {
           p.health == HealthStatus.sick);
 
   // --- care actions (no-ops on a dead pet; its stats are frozen) ---
+  //
+  // Each takes [nowMs] and resets the anchor of the stat it changes, so the
+  // relief lasts a fresh full period. Without this the sub-period time already
+  // "banked" against the old anchor would be re-applied by the very next
+  // applyElapsed tick — e.g. a fed pet bouncing back to starving ~1s later.
 
-  static Pet feed(Pet p) {
+  static Pet feed(Pet p, int nowMs) {
     if (p.isDead) return p;
     final hunger = (p.hunger - 1).clamp(0, GameConfig.hungerMax);
     return p.copyWith(
       hunger: hunger,
-      // Reset the anchor so the fed-down value starts a fresh accumulation.
-      hungerSinceMs: p.hungerSinceMs,
+      hungerSinceMs: nowMs, // fresh full period before the next hunger point
       careScore: _bump(p.careScore, GameConfig.careBumpFeed),
       // Below max again -> no longer starving.
       clearStarvingSince: hunger < GameConfig.hungerMax,
     );
   }
 
-  static Pet clean(Pet p) {
+  static Pet clean(Pet p, int nowMs) {
     if (p.isDead) return p;
     return p.copyWith(
       poopCount: 0,
+      poopSinceMs: nowMs, // fresh full period before the next poop
       clearMessySince: true,
       careScore: _bump(p.careScore, GameConfig.careBumpClean),
     );
   }
 
-  static Pet giveMedicine(Pet p) {
+  static Pet giveMedicine(Pet p, int nowMs) {
     if (p.isDead) return p;
+    // No time-anchored stat changes here; nowMs kept for a uniform action
+    // signature (see VpetGame._act).
     return p.health == HealthStatus.sick
         ? p.copyWith(
             health: HealthStatus.healthy,
@@ -158,10 +165,11 @@ class PetLogic {
         : p;
   }
 
-  static Pet play(Pet p) {
+  static Pet play(Pet p, int nowMs) {
     if (p.isDead) return p;
     return p.copyWith(
       happiness: (p.happiness + 1).clamp(0, GameConfig.happinessMax),
+      happinessSinceMs: nowMs, // fresh full period before the next decay
       careScore: _bump(p.careScore, GameConfig.careBumpPlay),
     );
   }

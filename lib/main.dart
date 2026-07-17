@@ -14,6 +14,9 @@ Future<void> main() async {
     careCheckUniqueName,
     careCheckTaskName,
     frequency: const Duration(minutes: 15), // Android floor is 15 minutes.
+    // Keep the already-scheduled task across cold starts so opening the app
+    // often doesn't perpetually reset the timer and starve the reminder.
+    existingWorkPolicy: ExistingPeriodicWorkPolicy.keep,
   );
 
   runApp(

@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
 import '../game/vpet_game.dart';
+import '../state/game_config.dart';
 import '../state/notifications.dart';
 import '../state/pet.dart';
 import '../state/pet_repository.dart';
@@ -97,7 +98,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       padding: const EdgeInsets.all(8),
       child: Row(
         children: [
-          if (p.hunger >= 3) Image.asset('assets/ui/hunger.png', width: 24),
+          if (p.hunger >= GameConfig.hungerWarnThreshold)
+            Image.asset('assets/ui/hunger.png', width: 24),
           if (p.poopCount > 0) Image.asset('assets/ui/poop.png', width: 24),
           if (p.health == HealthStatus.sick)
             Image.asset('assets/ui/skull.png', width: 24),

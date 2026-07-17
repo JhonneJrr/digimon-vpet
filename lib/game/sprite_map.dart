@@ -10,8 +10,6 @@
 import '../state/pet.dart';
 
 const int frameSize = 16;
-const int sheetCols = 3;
-const int sheetRows = 4;
 
 /// Idle animation frame ids (cross-stage reliable).
 const int idleFrameA = 0;

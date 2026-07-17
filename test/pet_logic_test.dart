@@ -86,28 +86,41 @@ void main() {
   group('care actions', () {
     test('feed lowers hunger and raises careScore', () {
       final p = Pet.newborn(0).copyWith(hunger: 3, careScore: 0.5);
-      final r = PetLogic.feed(p);
+      final r = PetLogic.feed(p, 0);
       expect(r.hunger, 2);
       expect(r.careScore, greaterThan(0.5));
     });
+    test('feeding resets the hunger anchor so relief lasts a full period', () {
+      // Age the pet so its anchor sits a full period behind `now`.
+      final now = GameConfig.msPerHungerPoint * 4;
+      final aged = PetLogic.applyElapsed(Pet.newborn(0), now);
+      expect(aged.hunger, GameConfig.hungerMax); // starving
+      final fed = PetLogic.feed(aged, now);
+      expect(fed.hunger, GameConfig.hungerMax - 1);
+      // Just under one period later, hunger must NOT re-increment.
+      final later =
+          PetLogic.applyElapsed(fed, now + GameConfig.msPerHungerPoint - 1);
+      expect(later.hunger, GameConfig.hungerMax - 1,
+          reason: 'fed relief must not bounce back within a period');
+    });
     test('clean removes all poop and clears filth window', () {
       final p = Pet.newborn(0).copyWith(poopCount: 5, messySinceMs: 10);
-      final r = PetLogic.clean(p);
+      final r = PetLogic.clean(p, 0);
       expect(r.poopCount, 0);
       expect(r.messySinceMs, isNull);
     });
     test('medicine cures a sick pet only', () {
       final sick =
           Pet.newborn(0).copyWith(health: HealthStatus.sick, sickSinceMs: 10);
-      final cured = PetLogic.giveMedicine(sick);
+      final cured = PetLogic.giveMedicine(sick, 0);
       expect(cured.health, HealthStatus.healthy);
       expect(cured.sickSinceMs, isNull);
       final healthy = Pet.newborn(0);
-      expect(PetLogic.giveMedicine(healthy).health, HealthStatus.healthy);
+      expect(PetLogic.giveMedicine(healthy, 0).health, HealthStatus.healthy);
     });
     test('play raises happiness capped at max', () {
       final p = Pet.newborn(0).copyWith(happiness: GameConfig.happinessMax);
-      expect(PetLogic.play(p).happiness, GameConfig.happinessMax);
+      expect(PetLogic.play(p, 0).happiness, GameConfig.happinessMax);
     });
 
     test('a dead pet is frozen against all care actions', () {
@@ -118,10 +131,10 @@ void main() {
         health: HealthStatus.sick,
         careScore: 0.5,
       );
-      expect(PetLogic.feed(dead).hunger, 4);
-      expect(PetLogic.clean(dead).poopCount, 5);
-      expect(PetLogic.giveMedicine(dead).health, HealthStatus.sick);
-      expect(PetLogic.play(dead).careScore, 0.5);
+      expect(PetLogic.feed(dead, 0).hunger, 4);
+      expect(PetLogic.clean(dead, 0).poopCount, 5);
+      expect(PetLogic.giveMedicine(dead, 0).health, HealthStatus.sick);
+      expect(PetLogic.play(dead, 0).careScore, 0.5);
       expect(PetLogic.applyElapsed(dead, 999999).hunger, 4);
     });
   });
@@ -134,14 +147,14 @@ void main() {
     });
     test('care actions raise careScore', () {
       final p = Pet.newborn(0).copyWith(careScore: 0.5);
-      expect(PetLogic.play(p).careScore, greaterThan(0.5));
+      expect(PetLogic.play(p, 0).careScore, greaterThan(0.5));
     });
     test('careScore never leaves [0,1]', () {
       final p = Pet.newborn(0).copyWith(careScore: 0.01);
       final r = PetLogic.applyElapsed(p, 200000); // heavy neglect
       expect(r.careScore, greaterThanOrEqualTo(0.0));
       final happy = Pet.newborn(0).copyWith(careScore: 0.99);
-      expect(PetLogic.play(happy).careScore, lessThanOrEqualTo(1.0));
+      expect(PetLogic.play(happy, 0).careScore, lessThanOrEqualTo(1.0));
     });
   });
 
