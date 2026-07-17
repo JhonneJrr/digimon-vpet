@@ -9,9 +9,23 @@ void main() {
     final back = Pet.fromJson(p.toJson());
     expect(back.hunger, 3);
     expect(back.careScore, 0.7);
-    expect(back.stage, LifeStage.baby1);
+    expect(back.speciesId, 'botamon');
     expect(back.stageStartedAtMs, 1000);
     expect(back.hungerSinceMs, 1000);
+  });
+
+  test('legacy save {stage:int} migrates to speciesId', () {
+    final legacy = {
+      'stage': 3, // old LifeStage.adult index
+      'hunger': 1, 'happiness': 2, 'poopCount': 0, 'health': 0,
+      'careScore': 0.7, 'stageStartedAtMs': 500,
+      'hungerSinceMs': 500, 'happinessSinceMs': 500, 'poopSinceMs': 500,
+      'starvingSinceMs': null, 'messySinceMs': null, 'sickSinceMs': null,
+      'isDead': false,
+    };
+    final p = Pet.fromJson(legacy);
+    expect(p.speciesId, 'greymon');
+    expect(p.stage, LifeStage.adult); // bridge still resolves
   });
 
   group('applyElapsed', () {
