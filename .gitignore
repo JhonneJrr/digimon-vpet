@@ -51,3 +51,6 @@ graphify-out/cache/
 .superpowers/sdd/*.diff
 .superpowers/sdd/task-*-report.md
 graphify-out/20*/
+
+# brainstorming visual companion session files
+.superpowers/brainstorm/
