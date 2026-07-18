@@ -71,4 +71,14 @@ void main() {
     // Botamon has no sick art -> resolves to idle.
     expect(reg['botamon'].sprite.resolve(CareAnim.sick), CareAnim.idle);
   });
+
+  test('pet display heights are the rebalanced (smaller) values', () {
+    final reg = loadSeed();
+    expect(reg['botamon'].sprite.displayHeight, 45);
+    expect(reg['koromon'].sprite.displayHeight, 57);
+    expect(reg['agumon'].sprite.displayHeight, 68);
+    expect(reg['greymon'].sprite.displayHeight, 99);
+    expect(reg['metalgreymon'].sprite.displayHeight, 128);
+    expect(reg['skullgreymon'].sprite.displayHeight, 125);
+  });
 }
