@@ -81,6 +81,19 @@ doors).
   future combat/training UIs mount — no shell refactor needed.**
 - **Assets:** `tools/sprite-library/copy_app_assets.sh` copies the shipped subset from `organized/`
   into `assets/game/backgrounds/` (committed, private repo). `lib/state/` untouched.
+- **Iterated after on-device feedback → the "2nd overhaul" (landscape):** the app is now **locked
+  landscape** (`main.dart`, immersive) so the 538×300 maps fill naturally and the pet reads small.
+  Home is a centred **538/300 stage** with the **real `spr_MainHUD`** overlaid (`lib/ui/hud/hud_overlay.dart`):
+  name on the top-left plate, status badges over the gauges, the 4 care actions on the bottom **hex
+  slots**, menu on the bottom-right slot. The glass top-bar/dock are retired on home (widgets kept).
+- **Living stage:** the pet **ambles** the map — `lib/game/wander.dart` (pure, tested) drives
+  idle↔walk + horizontal facing; per-biome ground line (`groundFractionForBiome`) places it correctly;
+  `walk` frames added to `assets/creatures/*` + `species.json` + `CareAnim`. Wander pauses while sick
+  or mid care-reaction.
+- **📌 FUTURE idea (user, 2026-07-18):** swap the home map based on the player's position on the
+  **world map** (exploration), instead of biome-driven — belongs to the world/exploration phase.
+- **Calibration TODO (minor):** the hex-slot action icons sit a touch high and the badges slightly
+  overlap the level gauge — fractional tweaks in `hud_overlay.dart`, easy to nudge on-device.
 
 ---
 
