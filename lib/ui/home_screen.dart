@@ -9,6 +9,7 @@ import '../state/pet.dart';
 import '../state/pet_repository.dart';
 import 'death_screen.dart';
 import 'hud_theme.dart';
+import 'shell/menu_sheet.dart';
 import 'widgets/action_dock.dart';
 import 'widgets/status_badges.dart';
 import 'widgets/top_status_bar.dart';
@@ -100,13 +101,15 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     if (game.isReady) {
       final DigimonSpecies sp = game.currentSpecies;
       return TopStatusBar(
-          label: sp.name, accent: hudAccentFor(sp.biome), onSettings: null);
+          label: sp.name,
+          accent: hudAccentFor(sp.biome),
+          onMenu: () => showMenuSheet(context));
     }
     // Pre-load neutral default (mirrors the newborn fallback intent).
     return TopStatusBar(
         label: 'Botamon',
         accent: hudAccentFor(Biome.nursery),
-        onSettings: null);
+        onMenu: () => showMenuSheet(context));
   }
 
   Pet _petOrNull() {
