@@ -42,43 +42,56 @@ class Stats {
       {'hp': hp, 'attack': attack, 'defense': defense, 'speed': speed};
 }
 
-/// Sprite-sheet geometry as data (replaces the old const frameSize + hardcoded
-/// idle frames), so a species can carry differently-sized frames.
-class SpriteRef {
-  final String sheet; // asset path relative to assets/, e.g. "sprites/Agumon.png"
-  final int frameWidth, frameHeight, columns, rows;
-  final List<int> idleFrames;
-  final double stepTime;
-  const SpriteRef({
-    required this.sheet,
-    required this.frameWidth,
-    required this.frameHeight,
-    required this.columns,
-    required this.rows,
-    required this.idleFrames,
-    required this.stepTime,
-  });
+/// Care-driven animation states the renderer can show.
+enum CareAnim { idle, eat, happy, sick }
 
-  factory SpriteRef.fromJson(Map<String, dynamic> j) => SpriteRef(
-        sheet: j['sheet'] as String,
-        frameWidth: j['frameWidth'] as int,
-        frameHeight: j['frameHeight'] as int,
-        columns: j['columns'] as int,
-        rows: j['rows'] as int,
-        idleFrames:
-            (j['idleFrames'] as List).map((e) => e as int).toList(growable: false),
+/// One animation clip: frame count + timing. Frame image paths are built by
+/// convention at render time: `creatures/<speciesId>/<state>_<i>.png`.
+class AnimClip {
+  final int frameCount;
+  final double stepTime;
+  final bool loop;
+  const AnimClip(
+      {required this.frameCount, required this.stepTime, required this.loop});
+
+  factory AnimClip.fromJson(Map<String, dynamic> j) => AnimClip(
+        frameCount: j['frames'] as int,
         stepTime: (j['stepTime'] as num).toDouble(),
+        loop: j['loop'] as bool,
       );
 
-  Map<String, dynamic> toJson() => {
-        'sheet': sheet,
-        'frameWidth': frameWidth,
-        'frameHeight': frameHeight,
-        'columns': columns,
-        'rows': rows,
-        'idleFrames': idleFrames,
-        'stepTime': stepTime,
-      };
+  Map<String, dynamic> toJson() =>
+      {'frames': frameCount, 'stepTime': stepTime, 'loop': loop};
+}
+
+/// A creature's animation set. `idle` is required; a missing state resolves to
+/// idle (e.g. Botamon has no `sick` art). [displayHeight] is the on-screen
+/// height (logical px) of the idle pose — it encodes visible growth across
+/// stages; the renderer scales every clip by the same idle-derived factor.
+class CreatureSprite {
+  final double displayHeight;
+  final Map<CareAnim, AnimClip> clips;
+  const CreatureSprite({required this.displayHeight, required this.clips});
+
+  /// The state actually available for [a] (itself if present, else idle).
+  CareAnim resolve(CareAnim a) => clips.containsKey(a) ? a : CareAnim.idle;
+
+  /// The clip to play for care state [a] (the idle clip if [a] is absent).
+  AnimClip clip(CareAnim a) => clips[resolve(a)]!;
+
+  factory CreatureSprite.fromJson(Map<String, dynamic> j) {
+    final clips = <CareAnim, AnimClip>{};
+    (j['states'] as Map<String, dynamic>).forEach((k, v) =>
+        clips[CareAnim.values.byName(k)] =
+            AnimClip.fromJson(v as Map<String, dynamic>));
+    if (!clips.containsKey(CareAnim.idle)) {
+      throw ArgumentError('Species sprite is missing the required "idle" state');
+    }
+    return CreatureSprite(
+      displayHeight: (j['displayHeight'] as num).toDouble(),
+      clips: clips,
+    );
+  }
 }
 
 class DigimonSpecies {
@@ -86,7 +99,7 @@ class DigimonSpecies {
   final String name;
   final StageTier tier;
   final Biome biome;
-  final SpriteRef sprite;
+  final CreatureSprite sprite;
   final List<Evolution> evolvesTo; // empty = terminal
   final Stats? stats;
   const DigimonSpecies({
@@ -105,7 +118,7 @@ class DigimonSpecies {
         name: j['name'] as String,
         tier: StageTier.values.byName(j['tier'] as String),
         biome: Biome.values.byName(j['biome'] as String),
-        sprite: SpriteRef.fromJson(j['sprite'] as Map<String, dynamic>),
+        sprite: CreatureSprite.fromJson(j['sprite'] as Map<String, dynamic>),
         evolvesTo: ((j['evolvesTo'] as List?) ?? const [])
             .map((e) => Evolution.fromJson(e as Map<String, dynamic>))
             .toList(growable: false),

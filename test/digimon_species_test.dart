@@ -9,9 +9,13 @@ void main() {
       'tier': 'rookie',
       'biome': 'jungle',
       'sprite': {
-        'sheet': 'sprites/Agumon.png',
-        'frameWidth': 16, 'frameHeight': 16, 'columns': 3, 'rows': 4,
-        'idleFrames': [0, 1], 'stepTime': 0.5,
+        'displayHeight': 96,
+        'states': {
+          'idle': {'frames': 6, 'stepTime': 0.25, 'loop': true},
+          'eat': {'frames': 2, 'stepTime': 0.2, 'loop': false},
+          'happy': {'frames': 2, 'stepTime': 0.2, 'loop': false},
+          'sick': {'frames': 1, 'stepTime': 0.4, 'loop': true},
+        },
       },
       'evolvesTo': [
         {'toId': 'greymon', 'afterMs': 75000, 'condition': 'always'},
@@ -25,10 +29,11 @@ void main() {
     expect(s.name, 'Agumon');
     expect(s.tier, StageTier.rookie);
     expect(s.biome, Biome.jungle);
-    expect(s.sprite.sheet, 'sprites/Agumon.png');
-    expect(s.sprite.frameWidth, 16);
-    expect(s.sprite.idleFrames, [0, 1]);
-    expect(s.sprite.stepTime, 0.5);
+    expect(s.sprite.displayHeight, 96);
+    expect(s.sprite.clip(CareAnim.idle).frameCount, 6);
+    expect(s.sprite.clip(CareAnim.idle).loop, true);
+    expect(s.sprite.clip(CareAnim.eat).frameCount, 2);
+    expect(s.sprite.clip(CareAnim.eat).loop, false);
     expect(s.evolvesTo.single.toId, 'greymon');
     expect(s.evolvesTo.single.afterMs, 75000);
     expect(s.evolvesTo.single.condition, EvoCondition.always);
@@ -45,11 +50,34 @@ void main() {
     expect(reg.ids, contains('agumon'));
   });
 
-  test('Evolution / SpriteRef round-trip through toJson', () {
+  test('Evolution round-trip through toJson', () {
     final e = Evolution.fromJson(
         {'toId': 'x', 'afterMs': 10, 'condition': 'careScoreHigh'});
     expect(Evolution.fromJson(e.toJson()).condition, EvoCondition.careScoreHigh);
-    final sr = SpriteRef.fromJson(json['agumon']!['sprite'] as Map<String, dynamic>);
-    expect(SpriteRef.fromJson(sr.toJson()).columns, 3);
+  });
+
+  test('CreatureSprite.resolve falls back to idle for a missing state', () {
+    final s = CreatureSprite.fromJson({
+      'displayHeight': 40,
+      'states': {
+        'idle': {'frames': 8, 'stepTime': 0.25, 'loop': true},
+        'eat': {'frames': 2, 'stepTime': 0.2, 'loop': false},
+      },
+    });
+    expect(s.resolve(CareAnim.sick), CareAnim.idle); // no sick -> idle
+    expect(s.clip(CareAnim.sick).frameCount, 8); // returns the idle clip
+    expect(s.resolve(CareAnim.eat), CareAnim.eat); // present -> itself
+  });
+
+  test('CreatureSprite.fromJson requires an idle state', () {
+    expect(
+      () => CreatureSprite.fromJson({
+        'displayHeight': 40,
+        'states': {
+          'eat': {'frames': 2, 'stepTime': 0.2, 'loop': false},
+        },
+      }),
+      throwsArgumentError,
+    );
   });
 }

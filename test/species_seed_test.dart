@@ -54,4 +54,21 @@ void main() {
         g.evolvesTo.firstWhere((e) => e.toId == 'skullgreymon').condition,
         EvoCondition.careScoreLow);
   });
+
+  test('each species sprite has idle and its frame counts match files on disk', () {
+    final reg = loadSeed();
+    const ids = ['botamon', 'koromon', 'agumon', 'greymon', 'metalgreymon', 'skullgreymon'];
+    for (final id in ids) {
+      final sprite = reg[id].sprite;
+      expect(sprite.clip(CareAnim.idle).frameCount, greaterThan(0), reason: '$id idle');
+      sprite.clips.forEach((state, clip) {
+        for (var i = 0; i < clip.frameCount; i++) {
+          final f = File('assets/creatures/$id/${state.name}_$i.png');
+          expect(f.existsSync(), true, reason: 'missing ${f.path}');
+        }
+      });
+    }
+    // Botamon has no sick art -> resolves to idle.
+    expect(reg['botamon'].sprite.resolve(CareAnim.sick), CareAnim.idle);
+  });
 }

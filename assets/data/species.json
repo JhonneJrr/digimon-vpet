@@ -3,28 +3,28 @@
     "name": "Botamon",
     "tier": "fresh",
     "biome": "nursery",
-    "sprite": { "sheet": "sprites/Botamon.png", "frameWidth": 16, "frameHeight": 16, "columns": 3, "rows": 4, "idleFrames": [0, 1], "stepTime": 0.5 },
+    "sprite": { "displayHeight": 64, "states": { "idle": {"frames":8,"stepTime":0.25,"loop":true}, "eat": {"frames":2,"stepTime":0.2,"loop":false}, "happy": {"frames":2,"stepTime":0.2,"loop":false} } },
     "evolvesTo": [ { "toId": "koromon", "afterMs": 5000, "condition": "always" } ]
   },
   "koromon": {
     "name": "Koromon",
     "tier": "inTraining",
     "biome": "meadow",
-    "sprite": { "sheet": "sprites/Koromon.png", "frameWidth": 16, "frameHeight": 16, "columns": 3, "rows": 4, "idleFrames": [0, 1], "stepTime": 0.5 },
+    "sprite": { "displayHeight": 80, "states": { "idle": {"frames":6,"stepTime":0.25,"loop":true}, "eat": {"frames":2,"stepTime":0.2,"loop":false}, "happy": {"frames":2,"stepTime":0.2,"loop":false}, "sick": {"frames":1,"stepTime":0.4,"loop":true} } },
     "evolvesTo": [ { "toId": "agumon", "afterMs": 25000, "condition": "always" } ]
   },
   "agumon": {
     "name": "Agumon",
     "tier": "rookie",
     "biome": "jungle",
-    "sprite": { "sheet": "sprites/Agumon.png", "frameWidth": 16, "frameHeight": 16, "columns": 3, "rows": 4, "idleFrames": [0, 1], "stepTime": 0.5 },
+    "sprite": { "displayHeight": 96, "states": { "idle": {"frames":6,"stepTime":0.25,"loop":true}, "eat": {"frames":2,"stepTime":0.2,"loop":false}, "happy": {"frames":2,"stepTime":0.2,"loop":false}, "sick": {"frames":1,"stepTime":0.4,"loop":true} } },
     "evolvesTo": [ { "toId": "greymon", "afterMs": 75000, "condition": "always" } ]
   },
   "greymon": {
     "name": "Greymon",
     "tier": "champion",
     "biome": "savanna",
-    "sprite": { "sheet": "sprites/Greymon.png", "frameWidth": 16, "frameHeight": 16, "columns": 3, "rows": 4, "idleFrames": [0, 1], "stepTime": 0.5 },
+    "sprite": { "displayHeight": 140, "states": { "idle": {"frames":6,"stepTime":0.25,"loop":true}, "eat": {"frames":2,"stepTime":0.2,"loop":false}, "happy": {"frames":2,"stepTime":0.2,"loop":false}, "sick": {"frames":1,"stepTime":0.4,"loop":true} } },
     "evolvesTo": [
       { "toId": "metalgreymon", "afterMs": 100000, "condition": "careScoreHigh" },
       { "toId": "skullgreymon", "afterMs": 100000, "condition": "careScoreLow" }
@@ -34,14 +34,14 @@
     "name": "MetalGreymon",
     "tier": "ultimate",
     "biome": "chrome",
-    "sprite": { "sheet": "sprites/MetalGreymon.png", "frameWidth": 16, "frameHeight": 16, "columns": 3, "rows": 4, "idleFrames": [0, 1], "stepTime": 0.5 },
+    "sprite": { "displayHeight": 180, "states": { "idle": {"frames":6,"stepTime":0.25,"loop":true}, "eat": {"frames":2,"stepTime":0.2,"loop":false}, "happy": {"frames":2,"stepTime":0.2,"loop":false}, "sick": {"frames":1,"stepTime":0.4,"loop":true} } },
     "evolvesTo": []
   },
   "skullgreymon": {
     "name": "SkullGreymon",
     "tier": "ultimate",
     "biome": "wasteland",
-    "sprite": { "sheet": "sprites/SkullGreymon.png", "frameWidth": 16, "frameHeight": 16, "columns": 3, "rows": 4, "idleFrames": [0, 1], "stepTime": 0.5 },
+    "sprite": { "displayHeight": 176, "states": { "idle": {"frames":6,"stepTime":0.25,"loop":true}, "eat": {"frames":2,"stepTime":0.2,"loop":false}, "happy": {"frames":2,"stepTime":0.2,"loop":false}, "sick": {"frames":1,"stepTime":0.4,"loop":true} } },
     "evolvesTo": []
   }
 }
