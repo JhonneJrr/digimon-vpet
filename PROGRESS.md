@@ -9,20 +9,33 @@ Human-readable status log + roadmap. Specs live in `docs/superpowers/specs/`, pl
 
 ## ▶️ RESUME POINT (read this first after a context clear)
 
-**Where we are:** mid-**brainstorm** for the first sub-project of a big new direction.
+**Where we are:** **Phase 0+1 (data-driven creatures) is COMPLETE** — built, reviewed, and
+verified on-device (real art animating).
 
-- **Git:** on branch **`feat/plan2-settings-audio`** (this branch has the parked Plan 2 docs +
-  the `.gitignore` protection for the extracted old game). `master` = `c4dff28` (v0.2 HUD redesign
-  merged). Working tree clean apart from regenerable `graphify-out/` churn.
-- **The pivot:** we reverse-engineered the user's own old game **"Digital Tamers Reborn"** and
-  recovered its assets (see §"Extracted assets"). Decision: **rebuild it as a full, modern game**
-  in this Flutter/Flame project — treated as a multi-phase **PROGRAM** (see §Roadmap).
-- **Current sub-project:** Program **Phase 0+1** (asset pipeline + data-driven creature
-  foundation). First increment scoped to **prove the data-driven architecture on ONE evolution
-  line** (Botamon→Koromon→Agumon→Greymon→MetalGreymon/SkullGreymon) with the real Reborn art.
-- **NEXT ACTION:** re-present the **Phase-1 design** (§"Phase 1 — pending design") and get the
-  user's approval; then `superpowers:writing-plans` → execute via subagent-driven-development.
-  (The design was presented but not yet approved when we saved & cleared.)
+- **Git:** branch **`feat/phase1-data-driven-creatures`**, HEAD `e538482`. All 8 code tasks done +
+  a whole-branch final review ("MERGE AFTER FIXES") whose one-line fix was applied. **60/60 tests,
+  `flutter analyze` clean.** On-device: Botamon renders + idle-animates with the real extracted art;
+  the HUD reads the species name; nursery biome palette. Ledger: `.superpowers/sdd/progress.md`.
+- **The pivot:** rebuilding the user's own game "Digital Tamers Reborn" as a modern Flutter/Flame
+  game, a multi-phase PROGRAM (see §Roadmap).
+- **✅ ART SOURCE DECIDED (2026-07-17):** the full art is recovered. From **v2** of the game
+  (`C:\Users\felip\Documents\DigitalTamers02\data.win`, 604 MB, GameMaker bytecode v17) we
+  extracted via **UndertaleModTool CLI** (headless) **67,755 pre-cropped RGBA sprite frames from
+  10,319 sprites** → `C:\Users\felip\Documents\DigitalTamers02_extracted\` (KEEP git-ignored — IP).
+  A verified `meta\digimon-id-map.md` maps **658/665** ids→names. Our line: Botamon **d1**,
+  Koromon **d2**, Agumon **d3**, Greymon **d5**, MetalGreymon **d85**, SkullGreymon **d87**,
+  WarGreymon **d151** — each with named poses (idle/eat/walk/angry/win/lose/dmg/atk…). The dump
+  also has button/power/HUD/background art. **This is the canonical art for the game** (supersedes
+  the community sprites and the Vital Bracelet BE source). Sprites are per-frame PNGs, per-creature
+  sizes, real alpha (no chroma-key).
+- **✅ STACK DECIDED:** stay on **Flutter/Flame + Dart**. The assets are portable PNGs/audio, our
+  data-driven architecture was built to consume them, and we keep the tested logic layer + agentic
+  workflow. GameMaker was considered and rejected (restart from scratch, weaker dev/agentic +
+  version-control workflow, export licensing, closer to cloning the original than building ours).
+- **NEXT ACTION:** Phase 1 done → push branch + open PR. Then pick the next phase: **battle system**
+  (Phase 2), or a **design/HUD overhaul** using the extracted button/power/HUD/background art +
+  care-state animations rolled out to the rest of the roster. The full art + `digimon-id-map.md`
+  (658/665 ids mapped) are ready to scale beyond the one line.
 
 ---
 

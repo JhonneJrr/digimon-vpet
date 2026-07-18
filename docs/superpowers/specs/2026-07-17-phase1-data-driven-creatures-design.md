@@ -173,3 +173,28 @@ later swap is a single `sprite.sheet`/geometry edit per species in `species.json
 - Real-art extraction spike: locate the 6 line sprites across the atlas pages, crop/re-author to
   the sheet convention, and clear the IP/licensing question before any swap.
 - Exact `Stats` fields are deferred to the battle phase; keep the reserved shape minimal now.
+
+---
+
+## Addendum — as-built (2026-07-17): real art + per-state animations
+
+Mid-build, the user recovered the **complete original art** (see memory
+`art-source-and-stack-decision`), which changed two decisions above. This addendum is the source of
+truth where it differs from the body:
+
+- **Sprite model (supersedes §Rendering / Q4 "geometry as data, idle only" + `SpriteRef`).** Instead
+  of one grid sheet + idle-only, each species now carries a **per-care-state animation set**:
+  `CreatureSprite { double displayHeight; Map<CareAnim, AnimClip> clips }`, `enum CareAnim { idle,
+  eat, happy, sick }`, `AnimClip { int frameCount; double stepTime; bool loop }`. `idle` is required;
+  a missing state resolves to idle (Botamon has no `sick`). Frame images are per-frame PNGs loaded by
+  convention `creatures/<speciesId>/<state>_<i>.png`. `PetComponent` plays a looping idle/sick base
+  plus one-shot eat/happy reactions (feed→eat, play→happy), scaling every clip by an idle-derived
+  factor so stages grow. `sprite_map.dart` was deleted.
+- **Art source (supersedes Q1 / §Art "ship community sprites, real art later").** Phase 1 ships the
+  **real extracted art now**: 67 curated, padded frames under `assets/creatures/<id>/` for the line
+  (Botamon `d1`, Koromon `d2`, Agumon `d3`, Greymon `d5`, MetalGreymon `d85`, SkullGreymon `d87`),
+  exported from the **DigitalTamers02 (Reborn v2)** `data.win` via UndertaleModTool. Community sprites
+  are retired. Stack stays Flutter/Flame.
+- **Everything else in the body holds:** data-driven identity (`speciesId`), data-driven evolution,
+  biome-as-species-field, pure state layer, save migration. Verified on-device (Botamon renders +
+  idle-animates with the real art; HUD reads the species; nursery biome palette). 60 tests green.
