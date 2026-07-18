@@ -9,11 +9,21 @@ Human-readable status log + roadmap. Specs live in `docs/superpowers/specs/`, pl
 
 ## ▶️ RESUME POINT (read this first after a context clear)
 
-**Where we are:** **Phase 0+1 (data-driven creatures) MERGED to `master`** (PR #3).
-**Sprite library reorganization DONE** (branch `feat/sprite-library-taxonomy`) — 67,755 frames now a
-browsable `organized/` library (see §Sprite library). **HUD overhaul + navigation shell DONE** (branch
-`feat/sprite-library-taxonomy` → `feat/hud-overhaul-shell`; see §HUD overhaul). Next up: **heavy
-mechanics — Phase 2 (battle) and/or training**, which now mount into the shell's `RoomScreen.content`.
+**Branch:** `feat/hud-overhaul-shell` @ `be72d52` (stacked on `feat/sprite-library-taxonomy`;
+**nothing merged to `master` this session** — Phase 0+1 is the last thing on master, PR #3).
+
+**This session (2026-07-18) shipped, all committed on the branch above, 69/69 tests + `flutter
+analyze` clean + on-device verified:**
+1. **graphify hook fix** — removed the nagging PreToolUse `hook-guard` hooks from `.claude/settings.json`.
+2. **Sprite library reorganization DONE** — 67,755 frames → `organized/` (see §Sprite library).
+3. **HUD overhaul + navigation shell DONE** (see §HUD overhaul) — then iterated after on-device
+   feedback into the **landscape "2nd overhaul": app locked landscape + the real `spr_MainHUD` overlay
+   + the pet ambles the map** (all in §HUD overhaul, bottom bullets).
+
+**In-flight (awaiting the user's pick):** I asked whether to (a) do the **minor HUD calibration**
+(nudge the hex-slot action icons down + move the badges off the level gauge — `lib/ui/hud/hud_overlay.dart`),
+(b) start **heavy mechanics** (Phase 2 battle and/or training, mounting into `RoomScreen.content` / the
+HUD hex slots), or (c) **open a PR** of this branch → `master`.
 
 - **Git:** **PR #3 merged to `master`** (2026-07-18 UTC). Phase 1 = data-driven creatures on the real
   extracted art; 60/60 tests, `flutter analyze` clean, on-device verified (Botamon idle-animates with
@@ -34,10 +44,20 @@ mechanics — Phase 2 (battle) and/or training**, which now mount into the shell
   data-driven architecture was built to consume them, and we keep the tested logic layer + agentic
   workflow. GameMaker was considered and rejected (restart from scratch, weaker dev/agentic +
   version-control workflow, export licensing, closer to cloning the original than building ours).
-- **NEXT ACTION:** pick **Phase 2 (battle system)** — the extracted battle sprites (`b###`) and
-  effects are now organized under `digimon/<name>/battle/` and `organized/effects/`. Or do a HUD/
-  design overhaul using `organized/ui` + `organized/backgrounds`. Each is a fresh brainstorm → spec →
-  plan → build cycle.
+- **NEXT ACTION (on resume):** confirm the user's pick from the three options above, then:
+  - **(a) HUD calibration** — in `lib/ui/hud/hud_overlay.dart`, the `slot(fx, fy, …)` calls place the
+    4 action icons at `fy: 0.865`; they sit a touch high in the hex sockets (nudge `fy` up ~0.88–0.90
+    and/or reduce icon padding) and the `StatusBadges` at `left: w*0.34, top: h*0.03` slightly overlaps
+    the level gauge (shift left/down). Re-verify with `/vpet-run` (landscape; dismiss the one-time
+    "Viewing full screen" Android dialog).
+  - **(b) Heavy mechanics** — fresh brainstorm → spec → plan → build. Battle sprites are under
+    `organized/digimon/<name>/battle/`, arenas under `organized/backgrounds/bg_Btl_*`, effects under
+    `organized/effects/`. Wire into `RoomScreen.content` (Batalha/Treino doors already exist).
+  - **(c) Open PR** — `feat/hud-overhaul-shell` → `master` (it also carries the sprite-library commits).
+- **Env reminder:** Flutter not on PATH → `$env:Path="C:\Users\felip\flutter\bin;"+$env:Path`;
+  `$env:JAVA_HOME="C:\Program Files\Android\Android Studio\jbr"`. Use `/vpet-verify` + `/vpet-run`.
+  Note: the accelerated game clock kills the pet in seconds during manual on-device testing (expected,
+  not a bug) — hatch and screenshot quickly.
 
 ### ✅ Sprite library (DONE — `feat/sprite-library-taxonomy`)
 
