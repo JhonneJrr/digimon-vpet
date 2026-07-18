@@ -71,6 +71,7 @@ flutter:
     - assets/creatures/greymon/
     - assets/creatures/metalgreymon/
     - assets/creatures/skullgreymon/
+    - assets/game/backgrounds/
 
   # To add assets to your application, add an assets section, like this:
   # assets:
