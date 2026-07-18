@@ -1,14 +1,10 @@
 // lib/state/pet.dart
 import 'game_config.dart';
 
-/// Legacy life-stage tier. Retained only as a transitional bridge while the
-/// codebase migrates to speciesId; removed once all consumers read the species.
-enum LifeStage { baby1, baby2, child, adult, perfectMetal, perfectSkull }
-
 enum HealthStatus { healthy, sick }
 
-/// Ordered ids of the seed line, indexed by the legacy LifeStage index. Used to
-/// migrate old saves and to back the temporary `stage` bridge.
+/// Ordered ids of the seed line, indexed by the legacy stage index. Used to
+/// migrate old saves.
 const List<String> _lineIds = [
   'botamon', 'koromon', 'agumon', 'greymon', 'metalgreymon', 'skullgreymon',
 ];
@@ -53,13 +49,6 @@ class Pet {
     this.isDead = false,
   });
 
-  /// TEMPORARY bridge: legacy consumers still read `pet.stage`. Removed in the
-  /// final migration task once biome/label/sprite all read the species.
-  LifeStage get stage {
-    final i = _lineIds.indexOf(speciesId);
-    return i >= 0 ? LifeStage.values[i] : LifeStage.baby1;
-  }
-
   factory Pet.newborn(int nowMs) => Pet(
         speciesId: 'botamon',
         hunger: 0,
@@ -75,7 +64,6 @@ class Pet {
 
   Pet copyWith({
     String? speciesId,
-    LifeStage? stage, // bridge: maps to speciesId (removed in Task 7)
     int? hunger,
     int? happiness,
     int? poopCount,
@@ -94,8 +82,7 @@ class Pet {
     bool? isDead,
   }) =>
       Pet(
-        speciesId:
-            speciesId ?? (stage != null ? _lineIds[stage.index] : this.speciesId),
+        speciesId: speciesId ?? this.speciesId,
         hunger: hunger ?? this.hunger,
         happiness: happiness ?? this.happiness,
         poopCount: poopCount ?? this.poopCount,

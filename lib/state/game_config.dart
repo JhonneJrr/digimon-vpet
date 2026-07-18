@@ -1,6 +1,4 @@
 // lib/state/game_config.dart
-import 'pet.dart';
-
 class GameConfig {
   /// Master multiplier. >1 = faster. Accelerated pace for this build.
   static const double gameSpeed = 12.0;
@@ -38,11 +36,4 @@ class GameConfig {
   static const double careDecayPerHungerPoint = 0.02; // per hunger point risen
   static const double careDecayPerPoop = 0.03; // per new poop that appears
   static const double careDecayOnSick = 0.15; // one-off when sickness onsets
-
-  static Map<LifeStage, int> get stageDurationMs => {
-        LifeStage.baby1: (60 * 1000 ~/ gameSpeed).round(),
-        LifeStage.baby2: (5 * 60 * 1000 ~/ gameSpeed).round(),
-        LifeStage.child: (15 * 60 * 1000 ~/ gameSpeed).round(),
-        LifeStage.adult: (20 * 60 * 1000 ~/ gameSpeed).round(),
-      };
 }

@@ -23,7 +23,7 @@ void main() {
 
   test('legacy save {stage:int} migrates to speciesId', () {
     final legacy = {
-      'stage': 3, // old LifeStage.adult index
+      'stage': 3, // old adult index
       'hunger': 1, 'happiness': 2, 'poopCount': 0, 'health': 0,
       'careScore': 0.7, 'stageStartedAtMs': 500,
       'hungerSinceMs': 500, 'happinessSinceMs': 500, 'poopSinceMs': 500,
@@ -32,7 +32,6 @@ void main() {
     };
     final p = Pet.fromJson(legacy);
     expect(p.speciesId, 'greymon');
-    expect(p.stage, LifeStage.adult); // bridge still resolves
   });
 
   group('applyElapsed', () {
