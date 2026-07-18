@@ -89,7 +89,8 @@ class VpetGame extends FlameGame {
     // Attach to the tree before showFor(): PetComponent's HasGameReference
     // resolves `game` via the parent chain, which only exists once added.
     add(petComponent);
-    await petComponent.showFor(pet);
+    await petComponent.showFor(currentSpecies,
+        sick: pet.health == HealthStatus.sick);
     petComponent.startIdlePulse();
 
     isReady = true;
@@ -118,7 +119,8 @@ class VpetGame extends FlameGame {
       pet = PetLogic.checkEvolution(
           PetLogic.applyElapsed(pet, nowMs()), nowMs(), _species);
       worldBackground.applyPalette(paletteForBiome(currentBiome));
-      petComponent.showFor(pet);
+      petComponent.showFor(currentSpecies,
+          sick: pet.health == HealthStatus.sick);
       _persistAndNotify();
     }
   }
@@ -142,22 +144,28 @@ class VpetGame extends FlameGame {
     return save;
   }
 
-  Future<void> _act(Pet Function(Pet, int) action) async {
+  Future<void> _act(Pet Function(Pet, int) action, {CareAnim? reaction}) async {
     pet = action(pet, nowMs());
-    await petComponent.showFor(pet);
+    if (reaction != null) {
+      await petComponent.playReaction(currentSpecies, reaction);
+    } else {
+      await petComponent.showFor(currentSpecies,
+          sick: pet.health == HealthStatus.sick);
+    }
     petComponent.reactBounce();
     await _persistAndNotify();
   }
 
-  Future<void> feed() => _act(PetLogic.feed);
+  Future<void> feed() => _act(PetLogic.feed, reaction: CareAnim.eat);
   Future<void> clean() => _act(PetLogic.clean);
   Future<void> medicine() => _act(PetLogic.giveMedicine);
-  Future<void> play() => _act(PetLogic.play);
+  Future<void> play() => _act(PetLogic.play, reaction: CareAnim.happy);
 
   Future<void> restart() async {
     pet = Pet.newborn(nowMs());
     worldBackground.applyPalette(paletteForBiome(currentBiome));
-    await petComponent.showFor(pet);
+    await petComponent.showFor(currentSpecies,
+        sick: pet.health == HealthStatus.sick);
     await _persistAndNotify();
   }
 }
