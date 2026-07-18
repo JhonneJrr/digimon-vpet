@@ -2,10 +2,13 @@
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
 import '../game/vpet_game.dart';
+import '../state/biome.dart';
+import '../state/digimon_species.dart';
 import '../state/notifications.dart';
 import '../state/pet.dart';
 import '../state/pet_repository.dart';
 import 'death_screen.dart';
+import 'hud_theme.dart';
 import 'widgets/action_dock.dart';
 import 'widgets/status_badges.dart';
 import 'widgets/top_status_bar.dart';
@@ -76,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               padding: const EdgeInsets.all(12),
               child: Column(
                 children: [
-                  TopStatusBar(pet: _petOrNull(), onSettings: null),
+                  _topBar(),
                   const SizedBox(height: 8),
                   Align(
                     alignment: Alignment.topRight,
@@ -91,6 +94,19 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         ],
       ),
     );
+  }
+
+  Widget _topBar() {
+    if (game.isReady) {
+      final DigimonSpecies sp = game.currentSpecies;
+      return TopStatusBar(
+          label: sp.name, accent: hudAccentFor(sp.biome), onSettings: null);
+    }
+    // Pre-load neutral default (mirrors the newborn fallback intent).
+    return TopStatusBar(
+        label: 'Botamon',
+        accent: hudAccentFor(Biome.nursery),
+        onSettings: null);
   }
 
   Pet _petOrNull() {

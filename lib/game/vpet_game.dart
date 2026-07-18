@@ -61,7 +61,7 @@ class VpetGame extends FlameGame {
 
   int nowMs() => _clock();
 
-  Biome get currentBiome => biomeForStage(pet.stage);
+  Biome get currentBiome => currentSpecies.biome;
 
   bool get _isSick => pet.health == HealthStatus.sick;
 

@@ -1,20 +1,19 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:digimon/state/biome.dart';
-import 'package:digimon/state/pet.dart';
+import 'package:digimon/state/digimon_species.dart';
 
 void main() {
-  test('every life stage maps to its biome', () {
-    expect(biomeForStage(LifeStage.baby1), Biome.nursery);
-    expect(biomeForStage(LifeStage.baby2), Biome.meadow);
-    expect(biomeForStage(LifeStage.child), Biome.jungle);
-    expect(biomeForStage(LifeStage.adult), Biome.savanna);
-    expect(biomeForStage(LifeStage.perfectMetal), Biome.chrome);
-    expect(biomeForStage(LifeStage.perfectSkull), Biome.wasteland);
-  });
-
-  test('biomeForStage is total over LifeStage (no throw for any value)', () {
-    for (final s in LifeStage.values) {
-      expect(() => biomeForStage(s), returnsNormally);
-    }
+  test('each species carries its biome (mapping preserved)', () {
+    final reg = SpeciesRegistry.fromJson(
+        jsonDecode(File('assets/data/species.json').readAsStringSync())
+            as Map<String, dynamic>);
+    expect(reg['botamon'].biome, Biome.nursery);
+    expect(reg['koromon'].biome, Biome.meadow);
+    expect(reg['agumon'].biome, Biome.jungle);
+    expect(reg['greymon'].biome, Biome.savanna);
+    expect(reg['metalgreymon'].biome, Biome.chrome);
+    expect(reg['skullgreymon'].biome, Biome.wasteland);
   });
 }
