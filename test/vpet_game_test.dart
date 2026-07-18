@@ -96,7 +96,7 @@ void main() {
     // ignore: invalid_use_of_internal_member
     game.mount();
     game.update(0);
-    expect(game.worldBackground.isMounted, isTrue);
+    expect(game.mapBackground.isMounted, isTrue);
     expect(game.currentBiome, Biome.nursery); // newborn = baby1
     // Pet anchored to its feet, below vertical center (on the ground band).
     expect(game.petComponent.position.y, greaterThan(game.size.y / 2));

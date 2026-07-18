@@ -11,9 +11,8 @@ import '../state/digimon_species.dart';
 import '../state/pet.dart';
 import '../state/pet_logic.dart';
 import '../state/pet_repository.dart';
-import 'biome_palette.dart';
+import 'map_background.dart';
 import 'pet_component.dart';
-import 'world_background.dart';
 
 /// Top-level Flame game: owns the [Pet] state, ticks it forward once per
 /// second while running, persists it, and renders it via [PetComponent].
@@ -31,10 +30,8 @@ class VpetGame extends FlameGame {
   final PetRepository repo;
   final int Function() _clock;
   final PetComponent petComponent = PetComponent();
-  // Named `worldBackground`, not `world`: FlameGame already defines a `world`
-  // member (the camera's `World` component), and this is a plain background
-  // component, not a Flame `World` subclass.
-  final WorldBackground worldBackground = WorldBackground();
+  // The real biome map behind the pet (replaces the old procedural world).
+  final MapBackgroundComponent mapBackground = MapBackgroundComponent();
 
   late Pet pet;
 
@@ -86,9 +83,9 @@ class VpetGame extends FlameGame {
     pet = PetLogic.checkEvolution(
         PetLogic.applyElapsed(pet, nowMs()), nowMs(), _species);
 
-    worldBackground.priority = -1; // behind everything
-    await add(worldBackground);
-    worldBackground.applyPalette(paletteForBiome(currentBiome));
+    mapBackground.priority = -1; // behind everything
+    await add(mapBackground);
+    await mapBackground.applyBiome(currentBiome);
 
     petComponent.anchor = Anchor.bottomCenter;
     petComponent.position = _petFootPosition();
@@ -124,7 +121,7 @@ class VpetGame extends FlameGame {
       _accum = 0;
       pet = PetLogic.checkEvolution(
           PetLogic.applyElapsed(pet, nowMs()), nowMs(), _species);
-      worldBackground.applyPalette(paletteForBiome(currentBiome));
+      mapBackground.applyBiome(currentBiome); // fire-and-forget; no-op unless biome changed
       petComponent.showFor(currentSpecies, sick: _isSick);
       _persistAndNotify();
     }
@@ -167,7 +164,7 @@ class VpetGame extends FlameGame {
 
   Future<void> restart() async {
     pet = Pet.newborn(nowMs());
-    worldBackground.applyPalette(paletteForBiome(currentBiome));
+    await mapBackground.applyBiome(currentBiome);
     await petComponent.showFor(currentSpecies, sick: _isSick);
     await _persistAndNotify();
   }
