@@ -60,9 +60,27 @@ class VpetGame extends FlameGame {
   VoidCallback? onPetChanged;
   VoidCallback? onDeath;
 
+  /// When true, the pet holds still (the care radial menu is open above it).
+  bool careMenuOpen = false;
+
   int nowMs() => _clock();
 
   Biome get currentBiome => currentSpecies.biome;
+
+  /// The pet's centre x as a fraction of stage width (0.5 before layout).
+  double get petAnchorXFraction {
+    final w = size.x;
+    return w == 0 ? 0.5 : (wander.x / w).clamp(0.0, 1.0);
+  }
+
+  /// The biome's ground line (the pet's feet), as a fraction of stage height.
+  double get petGroundFraction => groundFractionForBiome(currentBiome);
+
+  /// The pet's on-screen height as a fraction of stage height (0 before layout).
+  double get petHeightFraction {
+    final h = size.y;
+    return h == 0 ? 0 : currentSpecies.sprite.displayHeight / h;
+  }
 
   bool get _isSick => pet.health == HealthStatus.sick;
 
@@ -132,7 +150,7 @@ class VpetGame extends FlameGame {
     // Per-frame life: amble along the ground (unless sick or mid-reaction) and
     // keep the sprite's loop + facing in sync with the motion.
     final sick = _isSick;
-    if (!sick && !petComponent.isReacting) {
+    if (!sick && !petComponent.isReacting && !careMenuOpen) {
       wander.update(dt);
       petComponent.position.x = wander.x;
       petComponent.setFacing(wander.facing);
