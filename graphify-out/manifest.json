@@ -20,18 +20,18 @@
     "semantic_hash": ""
   },
   "lib/game/pet_component.dart": {
-    "mtime": 1784336286.410417,
-    "ast_hash": "9acde9fc734e84adbc35e0597fec4239",
+    "mtime": 1784348275.3734975,
+    "ast_hash": "2254aed14f87a3a7ee1426da0ccf50e6",
     "semantic_hash": ""
   },
   "lib/game/vpet_game.dart": {
-    "mtime": 1784337724.1004043,
-    "ast_hash": "bba1e5bcf644787ae0167933b3f5df10",
+    "mtime": 1784416200.6673305,
+    "ast_hash": "35dc19fab7492acddc94c3228f818846",
     "semantic_hash": ""
   },
   "lib/main.dart": {
-    "mtime": 1784300913.8564172,
-    "ast_hash": "b37721bbb348fa2d08368944b695f46f",
+    "mtime": 1784349142.4741783,
+    "ast_hash": "678acd5921792bfd37b45b4d5668a11d",
     "semantic_hash": ""
   },
   "lib/state/background.dart": {
@@ -70,8 +70,8 @@
     "semantic_hash": ""
   },
   "lib/ui/home_screen.dart": {
-    "mtime": 1784336572.1145947,
-    "ast_hash": "832f3422b9ea19f2c555ee9ddc75a0e7",
+    "mtime": 1784416209.3794198,
+    "ast_hash": "ec5a05f34909919fc1e2fa36d104bc10",
     "semantic_hash": ""
   },
   "scripts/make_icons.py": {
@@ -100,8 +100,8 @@
     "semantic_hash": ""
   },
   "test/vpet_game_test.dart": {
-    "mtime": 1784334618.470089,
-    "ast_hash": "2563a4281395640adf441235afba7fd1",
+    "mtime": 1784416173.5546844,
+    "ast_hash": "dedfb7969c13301b71a85ddeb92312a3",
     "semantic_hash": ""
   },
   "README.md": {
@@ -125,8 +125,8 @@
     "semantic_hash": ""
   },
   "pubspec.yaml": {
-    "mtime": 1784334256.5598154,
-    "ast_hash": "db645d34489fd34806076ba9aa03a1b4",
+    "mtime": 1784413299.9403346,
+    "ast_hash": "b1cfe72ca9c09f56cf776567d822e44e",
     "semantic_hash": ""
   },
   "android/app/src/main/res/mipmap-hdpi/ic_launcher.png": {
@@ -220,8 +220,8 @@
     "semantic_hash": ""
   },
   ".claude/settings.json": {
-    "mtime": 1784300913.8325925,
-    "ast_hash": "700acc50a0681f49bb44a543c4c799d1",
+    "mtime": 1784341017.3073058,
+    "ast_hash": "9a65eb5b6dd212d2bdcbc710bed9f664",
     "semantic_hash": ""
   },
   ".claude/CLAUDE.md": {
@@ -284,11 +284,6 @@
     "ast_hash": "ce75bcdffacdc540f54aac4986441ac2",
     "semantic_hash": ""
   },
-  "lib/game/world_background.dart": {
-    "mtime": 1784317271.8015704,
-    "ast_hash": "b7622b024ebc29927776e9ea8c09a78b",
-    "semantic_hash": ""
-  },
   "lib/state/biome.dart": {
     "mtime": 1784336548.3230186,
     "ast_hash": "1969a36ea2112a2f153da65c55d23957",
@@ -315,8 +310,8 @@
     "semantic_hash": ""
   },
   "lib/ui/widgets/top_status_bar.dart": {
-    "mtime": 1784336558.5516088,
-    "ast_hash": "4eccd8d35fac35a87cbe6dc970b8138b",
+    "mtime": 1784346369.0193472,
+    "ast_hash": "fc2f16a9bf3c0f0353a3fba5f4328c8b",
     "semantic_hash": ""
   },
   "test/biome_palette_test.dart": {
@@ -370,8 +365,8 @@
     "semantic_hash": ""
   },
   "PROGRESS.md": {
-    "mtime": 1784337908.7147524,
-    "ast_hash": "7333858a09f2b34b500c3415cda5f8fd",
+    "mtime": 1784417082.6834323,
+    "ast_hash": "2a75a06384353b25c465e851924b920d",
     "semantic_hash": ""
   },
   "docs/superpowers/plans/2026-07-17-hud-glass-redesign.md": {
@@ -450,18 +445,18 @@
     "semantic_hash": ""
   },
   "lib/state/digimon_species.dart": {
-    "mtime": 1784335368.6072454,
-    "ast_hash": "b132be004764e6d9146fae7e527392c8",
+    "mtime": 1784348017.5745974,
+    "ast_hash": "392c2ee41bfc402c5b8ac06cdaf76ff6",
     "semantic_hash": ""
   },
   "test/species_seed_test.dart": {
-    "mtime": 1784335368.6120737,
-    "ast_hash": "5c22488c8ccc51c7f81534c9e1381936",
+    "mtime": 1784413476.2829092,
+    "ast_hash": "f61ca4f9d70bc95d2b57f34e6fb61dc7",
     "semantic_hash": ""
   },
   "assets/data/species.json": {
-    "mtime": 1784335368.6072454,
-    "ast_hash": "b93515fba9d6066bfdd13c9a4f26fde0",
+    "mtime": 1784413509.9254124,
+    "ast_hash": "318aaefae44d641a4bd7f7274e5f1407",
     "semantic_hash": ""
   },
   "assets/creatures/agumon/eat_0.png": {
@@ -797,6 +792,476 @@
   "assets/creatures/skullgreymon/sick_0.png": {
     "mtime": 1784334205.2731152,
     "ast_hash": "44ce94cf30c85ca73005d801decd18e9",
+    "semantic_hash": ""
+  },
+  ".claude/commands/checkpoint.md": {
+    "mtime": 1784340164.53939,
+    "ast_hash": "5fd1dca7ac7c28c0797a969866dd7da5",
+    "semantic_hash": ""
+  },
+  "tools/sprite-library/build_manifest.py": {
+    "mtime": 1784344687.28528,
+    "ast_hash": "2b393f4a1917b0322402d498281fc27f",
+    "semantic_hash": ""
+  },
+  "tools/sprite-library/curated_lines.json": {
+    "mtime": 1784344687.2917821,
+    "ast_hash": "1769962e31a436c31379a0a92c01f0c9",
+    "semantic_hash": ""
+  },
+  "tools/sprite-library/materialize.ps1": {
+    "mtime": 1784344687.295331,
+    "ast_hash": "d479c4daa644c2c819ef5e5bd088a7a4",
+    "semantic_hash": ""
+  },
+  "tools/sprite-library/validate_lines.py": {
+    "mtime": 1784344687.2872686,
+    "ast_hash": "79f7d614000b8e0655d4b29042c61280",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-07-17-sprite-line-taxonomy-design.md": {
+    "mtime": 1784342412.5087593,
+    "ast_hash": "7ddb36ae0d09c1f248dd46e6aabd784f",
+    "semantic_hash": ""
+  },
+  "tools/sprite-library/README.md": {
+    "mtime": 1784344712.453796,
+    "ast_hash": "1751c5c51dd3656053867cc90da1bd5e",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-07-18-hud-overhaul-navigation-shell-design.md": {
+    "mtime": 1784345888.1269617,
+    "ast_hash": "dbedce907e9c0c5a91c8ab8bdabf81ff",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-07-18-hud-overhaul-navigation-shell.md": {
+    "mtime": 1784346174.957787,
+    "ast_hash": "8cdb511b58fdf32ab32be209d3bc8217",
+    "semantic_hash": ""
+  },
+  "lib/game/map_background.dart": {
+    "mtime": 1784348224.6947079,
+    "ast_hash": "f5aa37e6ef07538afde151b09cf49748",
+    "semantic_hash": ""
+  },
+  "tools/sprite-library/copy_app_assets.sh": {
+    "mtime": 1784413298.9308176,
+    "ast_hash": "1f7cc5b7d886aa778e52efd651330b13",
+    "semantic_hash": ""
+  },
+  "assets/game/backgrounds/biome_chrome.png": {
+    "mtime": 1784413303.5503252,
+    "ast_hash": "69e19a6e52aa7f4531f39df7000b2c97",
+    "semantic_hash": ""
+  },
+  "assets/game/backgrounds/biome_jungle.png": {
+    "mtime": 1784413303.603331,
+    "ast_hash": "686e054936bfba7bef530a32960d1236",
+    "semantic_hash": ""
+  },
+  "assets/game/backgrounds/biome_meadow.png": {
+    "mtime": 1784413303.1544662,
+    "ast_hash": "b42b185c9274d386c581cb1011ea62f9",
+    "semantic_hash": ""
+  },
+  "assets/game/backgrounds/biome_nursery.png": {
+    "mtime": 1784413303.2135446,
+    "ast_hash": "44eb6d548fdab376667803230c9ec57a",
+    "semantic_hash": ""
+  },
+  "assets/game/backgrounds/biome_savanna.png": {
+    "mtime": 1784413303.4377935,
+    "ast_hash": "67ba050870679b5fd41d61760149ca3e",
+    "semantic_hash": ""
+  },
+  "assets/game/backgrounds/biome_wasteland.png": {
+    "mtime": 1784413303.2697527,
+    "ast_hash": "e7c92c98eb888b9a075c72379592146e",
+    "semantic_hash": ""
+  },
+  "assets/game/backgrounds/room_battle.png": {
+    "mtime": 1784413303.322272,
+    "ast_hash": "e7c92c98eb888b9a075c72379592146e",
+    "semantic_hash": ""
+  },
+  "assets/game/backgrounds/room_evo.png": {
+    "mtime": 1784413303.4938035,
+    "ast_hash": "88398eea321faca063e4d47eaa72ce6e",
+    "semantic_hash": ""
+  },
+  "assets/game/backgrounds/room_map.png": {
+    "mtime": 1784413303.0949392,
+    "ast_hash": "fabe2cd9b27a1c16395fbda1ad45197a",
+    "semantic_hash": ""
+  },
+  "assets/game/backgrounds/room_shop.png": {
+    "mtime": 1784413303.7018502,
+    "ast_hash": "18983ba2bc7d7ae7eeb2615ceffdac0f",
+    "semantic_hash": ""
+  },
+  "assets/game/backgrounds/room_training.png": {
+    "mtime": 1784413303.3792748,
+    "ast_hash": "aa7ca32f6fe73fa0ac4d366fde195350",
+    "semantic_hash": ""
+  },
+  "test/map_background_test.dart": {
+    "mtime": 1784348252.4592948,
+    "ast_hash": "5ee272983c4943f2c8043b04543dad2a",
+    "semantic_hash": ""
+  },
+  "lib/ui/shell/room_config.dart": {
+    "mtime": 1784414778.4866028,
+    "ast_hash": "356666714864804006eb0a3cedae2c26",
+    "semantic_hash": ""
+  },
+  "lib/ui/shell/room_screen.dart": {
+    "mtime": 1784346263.2996254,
+    "ast_hash": "4d1b33f98d6c605adb6681fd0755d1da",
+    "semantic_hash": ""
+  },
+  "lib/ui/shell/menu_sheet.dart": {
+    "mtime": 1784346711.167278,
+    "ast_hash": "d850f5f6f607e70e222482c2dd371504",
+    "semantic_hash": ""
+  },
+  "test/shell/room_screen_test.dart": {
+    "mtime": 1784346284.6075096,
+    "ast_hash": "9d58b1650395f25b378d7436323d7a4e",
+    "semantic_hash": ""
+  },
+  "test/shell/menu_sheet_test.dart": {
+    "mtime": 1784414751.1934607,
+    "ast_hash": "393390db1adde7729c6dcee2d934966d",
+    "semantic_hash": ""
+  },
+  "assets/creatures/agumon/walk_0.png": {
+    "mtime": 1784347962.688618,
+    "ast_hash": "b4b304f809f78b5f8ad9830460a0ca63",
+    "semantic_hash": ""
+  },
+  "assets/creatures/agumon/walk_1.png": {
+    "mtime": 1784347962.9446783,
+    "ast_hash": "c8140ecfbf833a5129f5252bf284dce2",
+    "semantic_hash": ""
+  },
+  "assets/creatures/agumon/walk_2.png": {
+    "mtime": 1784347963.1988046,
+    "ast_hash": "a841fe6c3bd8c276ccd4f60e92aa96bd",
+    "semantic_hash": ""
+  },
+  "assets/creatures/agumon/walk_3.png": {
+    "mtime": 1784347963.4001186,
+    "ast_hash": "25ca34a0081ca071a6af2567b9123bd3",
+    "semantic_hash": ""
+  },
+  "assets/creatures/agumon/walk_4.png": {
+    "mtime": 1784347963.595228,
+    "ast_hash": "16ff73e3576ee12e4778328c80a50988",
+    "semantic_hash": ""
+  },
+  "assets/creatures/agumon/walk_5.png": {
+    "mtime": 1784347963.7915287,
+    "ast_hash": "1f6d7b7f3eab7ae6bd8a9f92be9b0584",
+    "semantic_hash": ""
+  },
+  "assets/creatures/agumon/walk_6.png": {
+    "mtime": 1784347963.9570386,
+    "ast_hash": "f3d5e6aa37853fb038e7604d00d61f37",
+    "semantic_hash": ""
+  },
+  "assets/creatures/agumon/walk_7.png": {
+    "mtime": 1784347964.1605265,
+    "ast_hash": "18311c1eb96c2a399b01a11435951e5d",
+    "semantic_hash": ""
+  },
+  "assets/creatures/botamon/walk_0.png": {
+    "mtime": 1784347959.7823887,
+    "ast_hash": "bd7860685da3ba94f1f5d34b9771261b",
+    "semantic_hash": ""
+  },
+  "assets/creatures/botamon/walk_1.png": {
+    "mtime": 1784347959.965779,
+    "ast_hash": "1260173612f2829d31f3fb06a96679d8",
+    "semantic_hash": ""
+  },
+  "assets/creatures/botamon/walk_2.png": {
+    "mtime": 1784347960.310613,
+    "ast_hash": "084f1c04af75790dca3ea0781d84b0bd",
+    "semantic_hash": ""
+  },
+  "assets/creatures/botamon/walk_3.png": {
+    "mtime": 1784347960.6285653,
+    "ast_hash": "76954f367b50f00e218680568db3f76f",
+    "semantic_hash": ""
+  },
+  "assets/creatures/botamon/walk_4.png": {
+    "mtime": 1784347960.9386747,
+    "ast_hash": "517a4cc77b5a4278138679f55bb1b3fd",
+    "semantic_hash": ""
+  },
+  "assets/creatures/botamon/walk_5.png": {
+    "mtime": 1784347961.2251484,
+    "ast_hash": "dbe1498c0c71b86c46ef1a9289b97191",
+    "semantic_hash": ""
+  },
+  "assets/creatures/greymon/walk_0.png": {
+    "mtime": 1784347964.338067,
+    "ast_hash": "7bfb7d1bb3f69d628ebda8f812e53df3",
+    "semantic_hash": ""
+  },
+  "assets/creatures/greymon/walk_1.png": {
+    "mtime": 1784347964.56058,
+    "ast_hash": "1ef802b6ba1ca14e9395c4a994bbf606",
+    "semantic_hash": ""
+  },
+  "assets/creatures/greymon/walk_2.png": {
+    "mtime": 1784347964.7724607,
+    "ast_hash": "4c360293dc35f999471490b7bb6657cd",
+    "semantic_hash": ""
+  },
+  "assets/creatures/greymon/walk_3.png": {
+    "mtime": 1784347964.9526126,
+    "ast_hash": "c2a8f0c21a51cd813c76e9bbab2afd40",
+    "semantic_hash": ""
+  },
+  "assets/creatures/greymon/walk_4.png": {
+    "mtime": 1784347965.1482751,
+    "ast_hash": "b2473465f6ecc8c4fe242a959ec7a03d",
+    "semantic_hash": ""
+  },
+  "assets/creatures/greymon/walk_5.png": {
+    "mtime": 1784347965.3635368,
+    "ast_hash": "ce908c411d35799a775e75b0073a65a8",
+    "semantic_hash": ""
+  },
+  "assets/creatures/greymon/walk_6.png": {
+    "mtime": 1784347965.5751956,
+    "ast_hash": "9f8a5a9e2f47e93b0a0de7e8b1253e4c",
+    "semantic_hash": ""
+  },
+  "assets/creatures/greymon/walk_7.png": {
+    "mtime": 1784347965.770451,
+    "ast_hash": "a7b9d7181b5ca1bfdfa3b99e12846f74",
+    "semantic_hash": ""
+  },
+  "assets/creatures/koromon/walk_0.png": {
+    "mtime": 1784347961.471257,
+    "ast_hash": "497768bce136ff065af169f2791e20ac",
+    "semantic_hash": ""
+  },
+  "assets/creatures/koromon/walk_1.png": {
+    "mtime": 1784347961.6655676,
+    "ast_hash": "ad98cdd670258c89e9bf492e03e161bd",
+    "semantic_hash": ""
+  },
+  "assets/creatures/koromon/walk_2.png": {
+    "mtime": 1784347961.8672502,
+    "ast_hash": "2a42804109b66b4a72f3f4105081550a",
+    "semantic_hash": ""
+  },
+  "assets/creatures/koromon/walk_3.png": {
+    "mtime": 1784347962.062632,
+    "ast_hash": "f205111ce6bce96fbe4ff2893deef026",
+    "semantic_hash": ""
+  },
+  "assets/creatures/koromon/walk_4.png": {
+    "mtime": 1784347962.2648985,
+    "ast_hash": "b43e7667956bc20eed7cad411cb1d7c0",
+    "semantic_hash": ""
+  },
+  "assets/creatures/koromon/walk_5.png": {
+    "mtime": 1784347962.4993908,
+    "ast_hash": "b4038090fe306553e44e9f17f9463999",
+    "semantic_hash": ""
+  },
+  "assets/creatures/metalgreymon/walk_0.png": {
+    "mtime": 1784347965.977403,
+    "ast_hash": "e1a20065ed638b3f7a0b5a88237ca5c2",
+    "semantic_hash": ""
+  },
+  "assets/creatures/metalgreymon/walk_1.png": {
+    "mtime": 1784347966.1633785,
+    "ast_hash": "8b3c608c430bee8fd624ab3d2954a131",
+    "semantic_hash": ""
+  },
+  "assets/creatures/metalgreymon/walk_2.png": {
+    "mtime": 1784347966.3598773,
+    "ast_hash": "45fa780cf54d7d27fe8d54e96ee7926b",
+    "semantic_hash": ""
+  },
+  "assets/creatures/metalgreymon/walk_3.png": {
+    "mtime": 1784347966.5367959,
+    "ast_hash": "84269b7d29782998de8a844ae0fedc78",
+    "semantic_hash": ""
+  },
+  "assets/creatures/metalgreymon/walk_4.png": {
+    "mtime": 1784347966.7272918,
+    "ast_hash": "58acdd4a7509b32d1eda7fc8792ff283",
+    "semantic_hash": ""
+  },
+  "assets/creatures/metalgreymon/walk_5.png": {
+    "mtime": 1784347967.2091682,
+    "ast_hash": "ccbe7c20f552f1c07c15201025bee1a4",
+    "semantic_hash": ""
+  },
+  "assets/creatures/metalgreymon/walk_6.png": {
+    "mtime": 1784347967.4117396,
+    "ast_hash": "7808620119a38d8a7c98305844379d8b",
+    "semantic_hash": ""
+  },
+  "assets/creatures/metalgreymon/walk_7.png": {
+    "mtime": 1784347967.5990067,
+    "ast_hash": "936c7a24e049e1ed018039209e8c3744",
+    "semantic_hash": ""
+  },
+  "assets/creatures/skullgreymon/walk_0.png": {
+    "mtime": 1784347967.7905095,
+    "ast_hash": "9e765cdda4cd8cfd8c13122b65e93c81",
+    "semantic_hash": ""
+  },
+  "assets/creatures/skullgreymon/walk_1.png": {
+    "mtime": 1784347967.9647305,
+    "ast_hash": "6a2a761ad2c2dbfb71cacc2c92fdd066",
+    "semantic_hash": ""
+  },
+  "assets/creatures/skullgreymon/walk_2.png": {
+    "mtime": 1784347968.1303165,
+    "ast_hash": "0e5c49a759a9b88cec26789d2bdf4f1c",
+    "semantic_hash": ""
+  },
+  "assets/creatures/skullgreymon/walk_3.png": {
+    "mtime": 1784347968.2913027,
+    "ast_hash": "75f821f8750f8ed1291f0e4231235e50",
+    "semantic_hash": ""
+  },
+  "assets/creatures/skullgreymon/walk_4.png": {
+    "mtime": 1784347968.4583013,
+    "ast_hash": "6dca5d74109c180f5aadc1a9f7c4e2d7",
+    "semantic_hash": ""
+  },
+  "assets/creatures/skullgreymon/walk_5.png": {
+    "mtime": 1784347968.6407423,
+    "ast_hash": "763b2d58fafdc3c5c72c197cefdd446f",
+    "semantic_hash": ""
+  },
+  "assets/creatures/skullgreymon/walk_6.png": {
+    "mtime": 1784347968.832874,
+    "ast_hash": "c92c9310f91924cc30de4fbcfa755175",
+    "semantic_hash": ""
+  },
+  "assets/creatures/skullgreymon/walk_7.png": {
+    "mtime": 1784347969.0247028,
+    "ast_hash": "8947c82b7b99eec0cc72aefa933af458",
+    "semantic_hash": ""
+  },
+  "lib/game/wander.dart": {
+    "mtime": 1784348193.4292338,
+    "ast_hash": "54cfdad79b6c16a263ec0a74102fe133",
+    "semantic_hash": ""
+  },
+  "test/wander_test.dart": {
+    "mtime": 1784348239.7706227,
+    "ast_hash": "f03be4341d4972c8c138ea11ff5bf2cc",
+    "semantic_hash": ""
+  },
+  "assets/game/ui/main_hud.png": {
+    "mtime": 1784349136.5413563,
+    "ast_hash": "4bea7c185fe08086a699d2b708ad228e",
+    "semantic_hash": ""
+  },
+  "lib/ui/hud/hud_overlay.dart": {
+    "mtime": 1784415025.563566,
+    "ast_hash": "d4ce3e1ed92746f592c6db8a7fb76550",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-07-18-radial-care-menu-and-real-hud-buttons-design.md": {
+    "mtime": 1784412640.690603,
+    "ast_hash": "9a68ba5265528b4e4ecc8904c1040200",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-07-18-radial-care-menu-and-real-hud-buttons.md": {
+    "mtime": 1784413164.1791933,
+    "ast_hash": "b60a83d0a90723a27f7b8873e109c29d",
+    "semantic_hash": ""
+  },
+  "assets/game/backgrounds/room_database.png": {
+    "mtime": 1784413303.656845,
+    "ast_hash": "c415120caef306b0167d7013653aa86b",
+    "semantic_hash": ""
+  },
+  "assets/game/ui/care/clean.png": {
+    "mtime": 1784413304.6754751,
+    "ast_hash": "d9d4ef2e92e07999475e26363e164d97",
+    "semantic_hash": ""
+  },
+  "assets/game/ui/care/feed.png": {
+    "mtime": 1784413304.1218944,
+    "ast_hash": "b0dabafda431210dd32f0d444948a47f",
+    "semantic_hash": ""
+  },
+  "assets/game/ui/care/medicine.png": {
+    "mtime": 1784413304.7263794,
+    "ast_hash": "194e3bc57156aea96b2bd6e2ccc11260",
+    "semantic_hash": ""
+  },
+  "assets/game/ui/care/play.png": {
+    "mtime": 1784413304.7782445,
+    "ast_hash": "3214f6aa6ea6ecbd4924e6d7ea14d89c",
+    "semantic_hash": ""
+  },
+  "assets/game/ui/menu_buttons/btn_0.png": {
+    "mtime": 1784413303.8258789,
+    "ast_hash": "14d395906582cfc2366dbb0c19075175",
+    "semantic_hash": ""
+  },
+  "assets/game/ui/menu_buttons/btn_1.png": {
+    "mtime": 1784413303.865879,
+    "ast_hash": "edf63648b77fad38506b7e1072222e39",
+    "semantic_hash": ""
+  },
+  "assets/game/ui/menu_buttons/btn_2.png": {
+    "mtime": 1784413303.908391,
+    "ast_hash": "ffd42ffe8b6874079342ac8b047108ec",
+    "semantic_hash": ""
+  },
+  "assets/game/ui/menu_buttons/btn_3.png": {
+    "mtime": 1784413303.9503984,
+    "ast_hash": "831c0b1cd6e337aea225ade2e0b56ed4",
+    "semantic_hash": ""
+  },
+  "assets/game/ui/menu_buttons/btn_4.png": {
+    "mtime": 1784413303.991399,
+    "ast_hash": "2d5551097e90f741e2841f2b84d2a1a9",
+    "semantic_hash": ""
+  },
+  "assets/game/ui/menu_buttons/btn_5.png": {
+    "mtime": 1784413304.0389256,
+    "ast_hash": "c6b58baa635099f5455be5c529546745",
+    "semantic_hash": ""
+  },
+  "test/hud/care_radial_test.dart": {
+    "mtime": 1784414029.0129132,
+    "ast_hash": "f8f0d0da0c622daac985ccd8e8c26786",
+    "semantic_hash": ""
+  },
+  "lib/ui/hud/care_radial.dart": {
+    "mtime": 1784414118.5207472,
+    "ast_hash": "4158cf32e413722917d7df9319a2ac39",
+    "semantic_hash": ""
+  },
+  "test/hud/pet_tap_target_test.dart": {
+    "mtime": 1784414334.810235,
+    "ast_hash": "5fb1595831d9633f890bff3fb7361dae",
+    "semantic_hash": ""
+  },
+  "lib/ui/hud/pet_tap_target.dart": {
+    "mtime": 1784414411.9742815,
+    "ast_hash": "757b9f61246ba72ccd6f47c431c663c7",
+    "semantic_hash": ""
+  },
+  "test/hud/hud_overlay_test.dart": {
+    "mtime": 1784414998.4281228,
+    "ast_hash": "f34db34e3a21ec875b8cf3d0b1b7ad5e",
     "semantic_hash": ""
   }
 }
