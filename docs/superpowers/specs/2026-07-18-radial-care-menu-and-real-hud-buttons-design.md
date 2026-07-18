@@ -115,6 +115,26 @@ private repo:
 The old `assets/ui/fe_*.png` care icons are left in place (still used by the pre-landscape widgets /
 tests) but are no longer referenced by the home HUD.
 
+### D. Pet scale rebalance (data-only)
+
+At the current `displayHeight`s the pet dominates the scene — Agumon (96) fills ~53% of the ~180px
+playfield between the HUD bars, and the Mega forms would be larger still. The pet should read as a
+creature *in* the landscape. Shrink the whole line by a uniform factor **≈0.71** (Agumon 96 → 68),
+preserving the relative sizing across evolutions:
+
+| species | `displayHeight` old → new |
+|---|---|
+| Botamon | 64 → 45 |
+| Koromon | 80 → 57 |
+| Agumon | 96 → 68 |
+| Greymon | 140 → 99 |
+| MetalGreymon | 180 → 128 |
+| SkullGreymon | 176 → 125 |
+
+This is a **pure data edit** to `assets/data/species.json` (`sprite.displayHeight` per species) — no
+code change; `PetComponent` already derives its scale from `displayHeight`. The radial menu's bubble
+size (§B) is tuned against the new, smaller pet. Final values are confirmed on-device.
+
 ## Components & boundaries
 
 - `lib/ui/hud/hud_overlay.dart` — **changed.** Sockets now render menu-button PNGs and take an
@@ -144,7 +164,8 @@ tests) but are no longer referenced by the home HUD.
   the four care callbacks reach `game.*`; opening the menu sets `careMenuOpen`.
 - **Pure/game test:** `wander` does not advance while `careMenuOpen` is true.
 - **On-device (`/vpet-run`, landscape):** buttons seat in sockets pixel-perfect; tapping the pet opens
-  the arc; icons (meat / poop / bandage / ball) read clearly; bubbles don't collide with the HUD.
+  the arc; icons (meat / poop / bandage / ball) read clearly; bubbles don't collide with the HUD; the
+  pet reads as a small creature in the landscape at the new `displayHeight`s (§D).
 
 ## Out of scope
 
