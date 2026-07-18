@@ -1,10 +1,13 @@
 // lib/game/vpet_game.dart
+import 'dart:convert';
 import 'dart:ui' show Color;
 import 'package:flame/cache.dart';
 import 'package:flame/components.dart' show Anchor, Vector2;
 import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import '../state/biome.dart';
+import '../state/digimon_species.dart';
 import '../state/pet.dart';
 import '../state/pet_logic.dart';
 import '../state/pet_repository.dart';
@@ -35,6 +38,13 @@ class VpetGame extends FlameGame {
 
   late Pet pet;
 
+  late SpeciesRegistry _species;
+
+  /// The current pet's species; falls back to the line start if a save
+  /// references an unknown id.
+  DigimonSpecies get currentSpecies =>
+      _species.lookup(pet.speciesId) ?? _species['botamon'];
+
   /// True once [onLoad] has initialised [pet]. The UI gates its care buttons
   /// on this so a tap before load can't read the `late` field and throw.
   /// (Named `isReady`, not `loaded` — Flame's Component already defines a
@@ -59,8 +69,15 @@ class VpetGame extends FlameGame {
   @override
   Future<void> onLoad() async {
     final saved = await repo.load();
+    final jsonStr = await rootBundle.loadString('assets/data/species.json');
+    _species = SpeciesRegistry.fromJson(
+        jsonDecode(jsonStr) as Map<String, dynamic>);
     pet = saved ?? Pet.newborn(nowMs());
-    pet = PetLogic.checkEvolution(PetLogic.applyElapsed(pet, nowMs()), nowMs());
+    if (!_species.contains(pet.speciesId)) {
+      pet = pet.copyWith(speciesId: 'botamon'); // normalize corrupt/removed id
+    }
+    pet = PetLogic.checkEvolution(
+        PetLogic.applyElapsed(pet, nowMs()), nowMs(), _species);
 
     worldBackground.priority = -1; // behind everything
     await add(worldBackground);
@@ -98,7 +115,8 @@ class VpetGame extends FlameGame {
     _accum += dt;
     if (_accum >= 1.0) {
       _accum = 0;
-      pet = PetLogic.checkEvolution(PetLogic.applyElapsed(pet, nowMs()), nowMs());
+      pet = PetLogic.checkEvolution(
+          PetLogic.applyElapsed(pet, nowMs()), nowMs(), _species);
       worldBackground.applyPalette(paletteForBiome(currentBiome));
       petComponent.showFor(pet);
       _persistAndNotify();
