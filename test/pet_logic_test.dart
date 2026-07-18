@@ -1,7 +1,14 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:digimon/state/digimon_species.dart';
 import 'package:digimon/state/pet.dart';
 import 'package:digimon/state/pet_logic.dart';
 import 'package:digimon/state/game_config.dart';
+
+SpeciesRegistry seed() => SpeciesRegistry.fromJson(
+    jsonDecode(File('assets/data/species.json').readAsStringSync())
+        as Map<String, dynamic>);
 
 void main() {
   test('Pet JSON round-trips', () {
@@ -9,9 +16,22 @@ void main() {
     final back = Pet.fromJson(p.toJson());
     expect(back.hunger, 3);
     expect(back.careScore, 0.7);
-    expect(back.stage, LifeStage.baby1);
+    expect(back.speciesId, 'botamon');
     expect(back.stageStartedAtMs, 1000);
     expect(back.hungerSinceMs, 1000);
+  });
+
+  test('legacy save {stage:int} migrates to speciesId', () {
+    final legacy = {
+      'stage': 3, // old adult index
+      'hunger': 1, 'happiness': 2, 'poopCount': 0, 'health': 0,
+      'careScore': 0.7, 'stageStartedAtMs': 500,
+      'hungerSinceMs': 500, 'happinessSinceMs': 500, 'poopSinceMs': 500,
+      'starvingSinceMs': null, 'messySinceMs': null, 'sickSinceMs': null,
+      'isDead': false,
+    };
+    final p = Pet.fromJson(legacy);
+    expect(p.speciesId, 'greymon');
   });
 
   group('applyElapsed', () {
@@ -185,44 +205,53 @@ void main() {
   });
 
   group('evolution', () {
-    test('baby1 evolves to baby2 after its duration', () {
-      final p = Pet.newborn(0);
-      final r = PetLogic.checkEvolution(
-          p, GameConfig.stageDurationMs[LifeStage.baby1]!);
-      expect(r.stage, LifeStage.baby2);
-      expect(r.stageStartedAtMs, GameConfig.stageDurationMs[LifeStage.baby1]!);
+    test('botamon evolves to koromon after its duration', () {
+      final reg = seed();
+      final after = reg['botamon'].evolvesTo.first.afterMs;
+      final r = PetLogic.checkEvolution(Pet.newborn(0), after, reg);
+      expect(r.speciesId, 'koromon');
+      expect(r.stageStartedAtMs, after);
     });
 
-    test('cascades through multiple stages, clock anchored to each threshold',
-        () {
-      final b1 = GameConfig.stageDurationMs[LifeStage.baby1]!;
-      final b2 = GameConfig.stageDurationMs[LifeStage.baby2]!;
-      final now = b1 + b2 + 5000; // 5s into child
-      final r = PetLogic.checkEvolution(Pet.newborn(0), now);
-      expect(r.stage, LifeStage.child);
+    test('cascades through multiple stages, clock anchored to each threshold', () {
+      final reg = seed();
+      final b1 = reg['botamon'].evolvesTo.first.afterMs;
+      final b2 = reg['koromon'].evolvesTo.first.afterMs;
+      final now = b1 + b2 + 5000; // 5s into agumon
+      final r = PetLogic.checkEvolution(Pet.newborn(0), now, reg);
+      expect(r.speciesId, 'agumon');
       expect(r.stageStartedAtMs, b1 + b2); // not `now`
     });
 
-    test('well-cared adult -> MetalGreymon', () {
+    test('well-cared greymon -> metalgreymon', () {
+      final reg = seed();
+      final after = reg['greymon'].evolvesTo.first.afterMs;
       final p = Pet.newborn(0)
-          .copyWith(stage: LifeStage.adult, careScore: 0.9, stageStartedAtMs: 0);
-      final r = PetLogic.checkEvolution(
-          p, GameConfig.stageDurationMs[LifeStage.adult]!);
-      expect(r.stage, LifeStage.perfectMetal);
+          .copyWith(speciesId: 'greymon', careScore: 0.9, stageStartedAtMs: 0);
+      final r = PetLogic.checkEvolution(p, after, reg);
+      expect(r.speciesId, 'metalgreymon');
     });
 
-    test('neglected adult -> SkullGreymon', () {
+    test('neglected greymon -> skullgreymon', () {
+      final reg = seed();
+      final after = reg['greymon'].evolvesTo.first.afterMs;
       final p = Pet.newborn(0)
-          .copyWith(stage: LifeStage.adult, careScore: 0.2, stageStartedAtMs: 0);
-      final r = PetLogic.checkEvolution(
-          p, GameConfig.stageDurationMs[LifeStage.adult]!);
-      expect(r.stage, LifeStage.perfectSkull);
+          .copyWith(speciesId: 'greymon', careScore: 0.2, stageStartedAtMs: 0);
+      final r = PetLogic.checkEvolution(p, after, reg);
+      expect(r.speciesId, 'skullgreymon');
     });
 
-    test('perfect stage does not evolve', () {
-      final p = Pet.newborn(0).copyWith(stage: LifeStage.perfectMetal);
-      final r = PetLogic.checkEvolution(p, 999999999);
-      expect(r.stage, LifeStage.perfectMetal);
+    test('ultimate stage does not evolve', () {
+      final reg = seed();
+      final p = Pet.newborn(0).copyWith(speciesId: 'metalgreymon');
+      final r = PetLogic.checkEvolution(p, 999999999, reg);
+      expect(r.speciesId, 'metalgreymon');
+    });
+
+    test('unknown speciesId is left unchanged (safe)', () {
+      final reg = seed();
+      final p = Pet.newborn(0).copyWith(speciesId: 'ghost');
+      expect(PetLogic.checkEvolution(p, 999999999, reg).speciesId, 'ghost');
     });
   });
 }

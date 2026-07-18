@@ -78,7 +78,7 @@ void main() {
 
     expect(game.pet.isDead, false);
     expect(game.pet.hunger, 0);
-    expect(game.pet.stage, LifeStage.baby1);
+    expect(game.pet.speciesId, 'botamon');
   });
 
   test('world is present and pet stands on the ground line after load', () async {

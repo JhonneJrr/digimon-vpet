@@ -2,6 +2,7 @@
 import 'dart:math' as math;
 import 'pet.dart';
 import 'game_config.dart';
+import 'digimon_species.dart';
 
 class PetLogic {
   /// Advance the pet to wall-clock time [nowMs].
@@ -175,41 +176,38 @@ class PetLogic {
   }
 
   /// Advance through as many stage thresholds as [nowMs] has crossed, starting
-  /// each new stage's clock at the instant its predecessor's requirement was
-  /// met (not the arbitrary check time), so infrequent polling never strands
-  /// the pet a stage behind.
-  static Pet checkEvolution(Pet p, int nowMs) {
+  /// each new stage's clock at the instant its predecessor's requirement was met
+  /// (not the poll time), so infrequent polling never strands the pet a stage
+  /// behind. Data-driven: reads each species' evolvesTo transitions.
+  static Pet checkEvolution(Pet p, int nowMs, SpeciesRegistry registry) {
     if (p.isDead) return p;
-    var stage = p.stage;
+    var speciesId = p.speciesId;
     var startedAt = p.stageStartedAtMs;
     while (true) {
-      final dur = GameConfig.stageDurationMs[stage];
-      if (dur == null) break; // perfect stages have no further duration
-      if (nowMs - startedAt < dur) break;
-      final next = _nextStage(stage, p.careScore);
-      if (next == null) break;
-      startedAt += dur;
-      stage = next;
+      final species = registry.lookup(speciesId);
+      if (species == null) break; // unknown id -> leave as-is
+      final evo = _pickEvolution(species.evolvesTo, nowMs - startedAt, p.careScore);
+      if (evo == null) break;
+      startedAt += evo.afterMs;
+      speciesId = evo.toId;
     }
-    if (stage == p.stage && startedAt == p.stageStartedAtMs) return p;
-    return p.copyWith(stage: stage, stageStartedAtMs: startedAt);
+    if (speciesId == p.speciesId && startedAt == p.stageStartedAtMs) return p;
+    return p.copyWith(speciesId: speciesId, stageStartedAtMs: startedAt);
   }
 
-  static LifeStage? _nextStage(LifeStage stage, double careScore) {
-    switch (stage) {
-      case LifeStage.baby1:
-        return LifeStage.baby2;
-      case LifeStage.baby2:
-        return LifeStage.child;
-      case LifeStage.child:
-        return LifeStage.adult;
-      case LifeStage.adult:
-        return careScore >= GameConfig.careScoreThreshold
-            ? LifeStage.perfectMetal
-            : LifeStage.perfectSkull;
-      case LifeStage.perfectMetal:
-      case LifeStage.perfectSkull:
-        return null;
+  /// First eligible transition (enough time elapsed AND its condition holds).
+  /// Conditions on a fork are complementary, so at most one fires.
+  static Evolution? _pickEvolution(
+      List<Evolution> options, int elapsedMs, double careScore) {
+    for (final e in options) {
+      if (elapsedMs < e.afterMs) continue;
+      final ok = switch (e.condition) {
+        EvoCondition.always => true,
+        EvoCondition.careScoreHigh => careScore >= GameConfig.careScoreThreshold,
+        EvoCondition.careScoreLow => careScore < GameConfig.careScoreThreshold,
+      };
+      if (ok) return e;
     }
+    return null;
   }
 }

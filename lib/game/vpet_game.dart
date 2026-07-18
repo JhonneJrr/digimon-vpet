@@ -1,10 +1,13 @@
 // lib/game/vpet_game.dart
+import 'dart:convert';
 import 'dart:ui' show Color;
 import 'package:flame/cache.dart';
 import 'package:flame/components.dart' show Anchor, Vector2;
 import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import '../state/biome.dart';
+import '../state/digimon_species.dart';
 import '../state/pet.dart';
 import '../state/pet_logic.dart';
 import '../state/pet_repository.dart';
@@ -17,11 +20,11 @@ import 'world_background.dart';
 class VpetGame extends FlameGame {
   VpetGame({required this.repo, int Function()? clock})
     : _clock = clock ?? (() => DateTime.now().millisecondsSinceEpoch) {
-    // sprite_map.dart paths are relative to assets/ (e.g. "sprites/Botamon
-    // .png"), not Flame's default "assets/images/" prefix, and this project
-    // bundles them under assets/sprites/ + assets/ui/. Use a dedicated cache
-    // (rather than mutating the global Flame.images) so this doesn't leak
-    // across game instances or tests.
+    // PetComponent loads creature animation frames by convention
+    // (creatures/<speciesId>/<state>_<i>.png) via game.images, relative to
+    // assets/ (not Flame's default "assets/images/" prefix). Use a dedicated
+    // cache (rather than mutating the global Flame.images) so this doesn't
+    // leak across game instances or tests.
     images = Images(prefix: 'assets/');
   }
 
@@ -34,6 +37,13 @@ class VpetGame extends FlameGame {
   final WorldBackground worldBackground = WorldBackground();
 
   late Pet pet;
+
+  late SpeciesRegistry _species;
+
+  /// The current pet's species; falls back to the line start if a save
+  /// references an unknown id.
+  DigimonSpecies get currentSpecies =>
+      _species.lookup(pet.speciesId) ?? _species['botamon'];
 
   /// True once [onLoad] has initialised [pet]. The UI gates its care buttons
   /// on this so a tap before load can't read the `late` field and throw.
@@ -51,7 +61,9 @@ class VpetGame extends FlameGame {
 
   int nowMs() => _clock();
 
-  Biome get currentBiome => biomeForStage(pet.stage);
+  Biome get currentBiome => currentSpecies.biome;
+
+  bool get _isSick => pet.health == HealthStatus.sick;
 
   @override
   Color backgroundColor() => const Color(0xFF9BBC0F); // LCD green, matches UI
@@ -59,8 +71,20 @@ class VpetGame extends FlameGame {
   @override
   Future<void> onLoad() async {
     final saved = await repo.load();
+    final jsonStr = await rootBundle.loadString('assets/data/species.json');
+    _species = SpeciesRegistry.fromJson(
+        jsonDecode(jsonStr) as Map<String, dynamic>);
     pet = saved ?? Pet.newborn(nowMs());
-    pet = PetLogic.checkEvolution(PetLogic.applyElapsed(pet, nowMs()), nowMs());
+    if (!_species.contains(pet.speciesId)) {
+      // Corrupt/removed species id: fall back to the line start AND reset the
+      // stage clock — otherwise a stale stageStartedAtMs would instant-cascade
+      // the freshly-reset Botamon through every stage on the next check.
+      debugPrint(
+          'VpetGame: unknown speciesId "${pet.speciesId}" -> reset to botamon');
+      pet = pet.copyWith(speciesId: 'botamon', stageStartedAtMs: nowMs());
+    }
+    pet = PetLogic.checkEvolution(
+        PetLogic.applyElapsed(pet, nowMs()), nowMs(), _species);
 
     worldBackground.priority = -1; // behind everything
     await add(worldBackground);
@@ -72,7 +96,7 @@ class VpetGame extends FlameGame {
     // Attach to the tree before showFor(): PetComponent's HasGameReference
     // resolves `game` via the parent chain, which only exists once added.
     add(petComponent);
-    await petComponent.showFor(pet);
+    await petComponent.showFor(currentSpecies, sick: _isSick);
     petComponent.startIdlePulse();
 
     isReady = true;
@@ -98,9 +122,10 @@ class VpetGame extends FlameGame {
     _accum += dt;
     if (_accum >= 1.0) {
       _accum = 0;
-      pet = PetLogic.checkEvolution(PetLogic.applyElapsed(pet, nowMs()), nowMs());
+      pet = PetLogic.checkEvolution(
+          PetLogic.applyElapsed(pet, nowMs()), nowMs(), _species);
       worldBackground.applyPalette(paletteForBiome(currentBiome));
-      petComponent.showFor(pet);
+      petComponent.showFor(currentSpecies, sick: _isSick);
       _persistAndNotify();
     }
   }
@@ -124,22 +149,26 @@ class VpetGame extends FlameGame {
     return save;
   }
 
-  Future<void> _act(Pet Function(Pet, int) action) async {
+  Future<void> _act(Pet Function(Pet, int) action, {CareAnim? reaction}) async {
     pet = action(pet, nowMs());
-    await petComponent.showFor(pet);
+    if (reaction != null) {
+      await petComponent.playReaction(currentSpecies, reaction);
+    } else {
+      await petComponent.showFor(currentSpecies, sick: _isSick);
+    }
     petComponent.reactBounce();
     await _persistAndNotify();
   }
 
-  Future<void> feed() => _act(PetLogic.feed);
+  Future<void> feed() => _act(PetLogic.feed, reaction: CareAnim.eat);
   Future<void> clean() => _act(PetLogic.clean);
   Future<void> medicine() => _act(PetLogic.giveMedicine);
-  Future<void> play() => _act(PetLogic.play);
+  Future<void> play() => _act(PetLogic.play, reaction: CareAnim.happy);
 
   Future<void> restart() async {
     pet = Pet.newborn(nowMs());
     worldBackground.applyPalette(paletteForBiome(currentBiome));
-    await petComponent.showFor(pet);
+    await petComponent.showFor(currentSpecies, sick: _isSick);
     await _persistAndNotify();
   }
 }

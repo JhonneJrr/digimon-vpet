@@ -1,38 +1,65 @@
 // lib/game/pet_component.dart
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
-import 'package:flame/sprite.dart';
 import 'package:flutter/animation.dart' show Curves;
-import '../state/pet.dart';
-import 'sprite_map.dart';
+import '../state/digimon_species.dart';
 
-/// Renders the pet's current life stage as a looping 2-frame idle animation
-/// and provides a quick scale-bounce for button-press feedback (the reaction
-/// frames differ per stage sheet so they are not used — see
-/// sprite-mapping-verified.md).
+/// Renders the pet as a per-care-state animation built from the species'
+/// [CreatureSprite]. A looping base state (idle, or sick when unwell) plus
+/// one-shot eat/happy reactions. Frame images are loaded by convention:
+/// `creatures/<speciesId>/<state>_<i>.png`.
 class PetComponent extends SpriteAnimationComponent with HasGameReference {
-  LifeStage? _currentStage;
+  String? _speciesId;
+  CareAnim _base = CareAnim.idle;
+  double _scale = 1;
   int _loadGen = 0;
 
-  LifeStage stageOf(Pet pet) => pet.stage;
+  /// Show [species] at its base state (sick loop if [sick], else idle loop).
+  /// No-op when species AND base are unchanged, so a per-tick call never
+  /// interrupts a running reaction or restarts the loop.
+  Future<void> showFor(DigimonSpecies species, {required bool sick}) async {
+    final desiredBase = sick ? CareAnim.sick : CareAnim.idle;
+    if (species.id == _speciesId && desiredBase == _base && animation != null) {
+      return; // steady state
+    }
+    final speciesChanged = species.id != _speciesId;
+    _speciesId = species.id;
+    _base = desiredBase;
+    if (speciesChanged) {
+      final idleImg = await game.images.load('creatures/${species.id}/idle_0.png');
+      _scale = species.sprite.displayHeight / idleImg.height;
+    }
+    await _play(species, _base);
+  }
 
-  Future<void> showFor(Pet pet) async {
-    if (_currentStage == pet.stage && animation != null) return;
+  /// Play a one-shot [reaction] (e.g. eat/happy), then return to the base state.
+  Future<void> playReaction(DigimonSpecies species, CareAnim reaction) =>
+      _play(species, reaction, oneShotThenBase: true);
+
+  Future<void> _play(DigimonSpecies species, CareAnim state,
+      {bool oneShotThenBase = false}) async {
     final gen = ++_loadGen;
-    final image = await game.images.load(spriteSheetForStage(pet.stage));
-    // If another showFor started while we awaited the image load, its result
-    // is newer — drop ours so we never strand a stale sprite.
-    if (gen != _loadGen) return;
-    _currentStage = pet.stage;
-    final sheet = SpriteSheet(
-      image: image,
-      srcSize: Vector2.all(frameSize.toDouble()),
-    );
-    animation = SpriteAnimation.spriteList(
-      [sheet.getSpriteById(idleFrameA), sheet.getSpriteById(idleFrameB)],
-      stepTime: 0.5,
-    );
-    size = Vector2.all(frameSize.toDouble() * 6); // scale up for phone screen
+    final eff = species.sprite.resolve(state);
+    final clip = species.sprite.clip(state);
+    final sprites = <Sprite>[];
+    for (var i = 0; i < clip.frameCount; i++) {
+      final img = await game.images.load('creatures/${species.id}/${eff.name}_$i.png');
+      sprites.add(Sprite(img));
+    }
+    if (gen != _loadGen) return; // a newer _play superseded us
+    if (sprites.isEmpty) return; // misconfigured species: fail safe
+    final loop = oneShotThenBase ? false : clip.loop;
+    animation =
+        SpriteAnimation.spriteList(sprites, stepTime: clip.stepTime, loop: loop);
+    size = sprites.first.srcSize * _scale;
+    if (oneShotThenBase) {
+      // When the one-shot finishes, fall back to the current base state —
+      // but only if no newer species has taken over in the meantime, or a
+      // mid-reaction evolution would leave the pet stuck on the old species.
+      animationTicker?.onComplete = () {
+        if (species.id == _speciesId) _play(species, _base);
+      };
+    }
   }
 
   /// Quick "press feedback" bounce: scale up then back down.
@@ -41,27 +68,21 @@ class PetComponent extends SpriteAnimationComponent with HasGameReference {
       ScaleEffect.by(
         Vector2.all(1.15),
         EffectController(
-          duration: 0.1,
-          reverseDuration: 0.1,
-          curve: Curves.easeOut,
-        ),
+            duration: 0.1, reverseDuration: 0.1, curve: Curves.easeOut),
       ),
     );
   }
 
-  /// Gentle continuous "breathing" — a subtle scale pulse, so the pet reads as
-  /// alive while the world scrolls under it. Scale-based (not position-based)
-  /// so it never fights VpetGame's centering/ground placement.
+  /// Gentle continuous "breathing" scale pulse so the pet reads as alive.
   void startIdlePulse() {
     add(
       ScaleEffect.by(
         Vector2.all(1.04),
         EffectController(
-          duration: 0.9,
-          reverseDuration: 0.9,
-          infinite: true,
-          curve: Curves.easeInOut,
-        ),
+            duration: 0.9,
+            reverseDuration: 0.9,
+            infinite: true,
+            curve: Curves.easeInOut),
       ),
     );
   }

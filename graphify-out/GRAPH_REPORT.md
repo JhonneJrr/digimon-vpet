@@ -1,16 +1,16 @@
 # Graph Report - digimon  (2026-07-17)
 
 ## Corpus Check
-- 41 files · ~25,828 words
+- 65 files · ~63,120 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 355 nodes · 352 edges · 33 communities (25 shown, 8 thin omitted)
+- 620 nodes · 661 edges · 41 communities (33 shown, 8 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `1d01c54c`
+- Built from commit: `e5384829`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -45,18 +45,26 @@
 - CLAUDE.md
 - CLAUDE.md
 - extraction-spec.md
+- Procedure
+- /vpet-verify
+- Flutter/Flame Reviewer — Digimon V-Pet
+- Plan 2 — Settings, Lockable HUD Color & Audio — Implementation Plan
+- digimon_species.dart
+- Global Constraints
+- pet_component.dart
+- PetComponent
 
 ## God Nodes (most connected - your core abstractions)
-1. `Digimon V-Pet Game — Design Document` - 14 edges
-2. `What You Must Do When Invoked` - 12 edges
-3. `Digimon V-Pet — Progress Ledger` - 11 edges
-4. `/graphify` - 10 edges
-5. `Digimon V-Pet Game Implementation Plan` - 10 edges
-6. `graphify reference: extra exports and benchmark` - 8 edges
-7. `Phase 4 Report — Local Notifications + Periodic Reminder` - 7 edges
-8. `Phase 1 — Core State Logic (pure, TDD)` - 7 edges
-9. `Verified sprite-sheet frame mapping (Task 2.1)` - 6 edges
-10. `Phase 1 — Core State Logic — Implementation Report` - 6 edges
+1. `HUD Glass Redesign — Implementation Plan (Plan 1: Visual Core / Beta)` - 17 edges
+2. `Digimon V-Pet Game — Design Document` - 14 edges
+3. `Phase 0+1 — Data-Driven Creatures Foundation — Design` - 14 edges
+4. `Plan 2 — Settings, Lockable HUD Color & Audio — Implementation Plan` - 13 edges
+5. `What You Must Do When Invoked` - 12 edges
+6. `Digimon V-Pet — Plan 2: Settings, Lockable HUD Color & Audio — Design Document` - 12 edges
+7. `Digimon Game — Progress & Roadmap` - 11 edges
+8. `Digimon V-Pet — HUD & Visual Redesign — Design Document` - 11 edges
+9. `/graphify` - 10 edges
+10. `Digimon V-Pet Game Implementation Plan` - 10 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `_FakeRepo` --implements--> `PetRepository`  [EXTRACTED]
@@ -65,75 +73,75 @@
 ## Import Cycles
 - None detected.
 
-## Communities (33 total, 8 thin omitted)
+## Communities (41 total, 8 thin omitted)
 
 ### Community 0 - "Digimon V-Pet Game Implementation Plan"
 Cohesion: 0.07
 Nodes (29): Digimon V-Pet Game Implementation Plan, File Structure, Global Constraints, Phase 0 — Environment & Scaffolding, Phase 1 — Core State Logic (pure, TDD), Phase 2 — Game Rendering (Flame), Phase 3 — UI Assets, Phase 4 — Notifications (+21 more)
 
 ### Community 1 - "vpet_game.dart"
-Cohesion: 0.07
-Nodes (28): dart:ui, Future, _accum, _act, backgroundColor, clean, _deathNotified, feed (+20 more)
+Cohesion: 0.05
+Nodes (36): Biome get, bool get, DigimonSpecies get, Future, _accum, _act, backgroundColor, clean (+28 more)
 
 ### Community 2 - "pet_component.dart"
-Cohesion: 0.10
-Nodes (19): HasGameReference, _currentStage, _loadGen, PetComponent, reactBounce, showFor, stageOf, frameSize (+11 more)
+Cohesion: 0.12
+Nodes (15): Addendum — as-built (2026-07-17): real art + per-state animations, Art, `assets/data/species.json` (seed — illustrative shape), Data model (`lib/state/`, pure, tested), Decisions (from brainstorm), Error handling / edge cases, Evolution logic (`pet_logic.dart`), Goal (+7 more)
 
 ### Community 3 - "game_config.dart"
-Cohesion: 0.08
-Nodes (23): careBumpClean, careBumpFeed, careBumpMedicine, careBumpPlay, careDecayOnSick, careDecayPerHungerPoint, careDecayPerPoop, careScoreThreshold (+15 more)
+Cohesion: 0.06
+Nodes (30): careBumpClean, careBumpFeed, careBumpMedicine, careBumpPlay, careDecayOnSick, careDecayPerHungerPoint, careDecayPerPoop, careScoreThreshold (+22 more)
 
 ### Community 4 - "vpet_game_test.dart"
-Cohesion: 0.11
-Nodes (18): Pet, package:digimon/game/pet_component.dart, package:digimon/game/vpet_game.dart, package:digimon/state/game_config.dart, package:digimon/state/pet.dart, package:digimon/state/pet_logic.dart, package:digimon/state/pet_repository.dart, package:flame/game.dart (+10 more)
+Cohesion: 0.08
+Nodes (24): dart:math, digimon_species.dart, game_config.dart, applyElapsed, _bump, checkEvolution, _clamp01, clean (+16 more)
 
 ### Community 5 - "pet.dart"
-Cohesion: 0.10
-Nodes (20): int?, careScore, copyWith, fromJson, happiness, happinessSinceMs, health, HealthStatus (+12 more)
+Cohesion: 0.09
+Nodes (22): int?, careScore, copyWith, fromJson, happiness, happinessSinceMs, health, HealthStatus (+14 more)
 
 ### Community 6 - "home_screen.dart"
 Cohesion: 0.07
-Nodes (29): death_screen.dart, FlameGame, ../game/vpet_game.dart, VpetGame, build, createState, DeathScreen, _DeathScreenState (+21 more)
+Nodes (31): death_screen.dart, FlameGame, ../game/vpet_game.dart, VpetGame, build, createState, DeathScreen, _DeathScreenState (+23 more)
 
 ### Community 7 - "main.dart"
-Cohesion: 0.12
-Nodes (14): @pragma, careCheckTaskName, careCheckUniqueName, main, callbackDispatcher, notifications.dart, package:digimon/ui/death_screen.dart, package:flutter/material.dart (+6 more)
+Cohesion: 0.15
+Nodes (11): @pragma, careCheckTaskName, careCheckUniqueName, main, callbackDispatcher, notifications.dart, package:workmanager/workmanager.dart, pet_logic.dart (+3 more)
 
 ### Community 8 - "pet_logic.dart"
-Cohesion: 0.13
-Nodes (14): dart:math, game_config.dart, applyElapsed, _bump, checkEvolution, _clamp01, clean, feed (+6 more)
+Cohesion: 0.05
+Nodes (39): dart:convert, dart:io, Function, package:digimon/game/biome_palette.dart, package:digimon/game/pet_component.dart, package:digimon/game/vpet_game.dart, package:digimon/state/biome.dart, package:digimon/state/digimon_species.dart (+31 more)
 
 ### Community 9 - "Digimon V-Pet Game — Design Document"
 Cohesion: 0.13
 Nodes (14): 10. Notifications & Background, 11. Testing, 12. Out of Scope (This Version), 13. Tooling Note, 1. Overview, 2. Tech Stack, 3. Project Structure, 4. Assets & Visual Direction (+6 more)
 
 ### Community 10 - "pet_repository.dart"
-Cohesion: 0.20
-Nodes (10): dart:convert, clear, _key, load, PetRepository, PrefsPetRepository, save, pet.dart (+2 more)
+Cohesion: 0.06
+Nodes (34): bool feedEnabled, cleanEnabled, medicineEnabled,, glass_panel.dart, IconData, Pet, ActionDock, _btn, build, onPlay (+26 more)
 
 ### Community 11 - "death_screen.dart"
 Cohesion: 0.08
 Nodes (24): For /graphify add and --watch, For /graphify query, For the commit hook and native CLAUDE.md integration, For --update and --cluster-only, /graphify, Honesty Rules, Interpreter guard for subcommands, Part A - Structural extraction for code files (+16 more)
 
 ### Community 12 - "notifications.dart"
-Cohesion: 0.22
-Nodes (8): cancelAll, init, _needsYouId, Notifications, _plugin, scheduleNeedsYou, package:flutter_local_notifications/flutter_local_notifications.dart, static const int
+Cohesion: 0.07
+Nodes (27): Color, dart:ui, EdgeInsets, ../game/biome_palette.dart, ../hud_theme.dart, accent, BiomePalette, far (+19 more)
 
 ### Community 13 - "Digimon V-Pet — Progress Ledger"
-Cohesion: 0.17
-Nodes (11): ALL PHASES COMPLETE — dispatching final whole-branch review, BASE for Phase 2 review: 54bffc6, Digimon V-Pet — Progress Ledger, Final whole-branch review COMPLETE, Minor findings deferred to final review, Phase 2 COMPLETE (reviewed + fixed + on-device verified), Phase 2 update (on-device verified), Phase 4 COMPLETE (reworked + verified) (+3 more)
+Cohesion: 0.09
+Nodes (26): biome_palette.dart, HasGameReference, applyPalette, _bottom, _color, _current, _far, _ground (+18 more)
 
 ### Community 14 - "Phase 4 Report — Local Notifications + Periodic Reminder"
-Cohesion: 0.25
-Nodes (7): Commit range, Files changed, lib/state and lib/game, Phase 4 Report — Local Notifications + Periodic Reminder, Plugin-API deviations from the plan's reference code, Status: DONE, Verify results
+Cohesion: 0.11
+Nodes (17): File Structure, Global Constraints, HUD Glass Redesign — Implementation Plan (Plan 1: Visual Core / Beta), Out of Scope (deferred to Plan 2), Self-Review (against the spec), Task 10: Top status bar, Task 11: Compose the new HUD in HomeScreen, Task 12: Whole-feature review + verification pass (+9 more)
 
 ### Community 15 - "Verified sprite-sheet frame mapping (Task 2.1)"
-Cohesion: 0.29
-Nodes (6): Cross-stage reliable mapping (USE THIS), Decision for the MVP, NOT cross-stage reliable (do NOT assume a shared index), Sheet geometry (CONFIRMED), spriteSheetForStage mapping (unchanged from plan), Verified sprite-sheet frame mapping (Task 2.1)
+Cohesion: 0.11
+Nodes (17): 10. Versioning / Docs, 11. Out of Scope (This Version), 1. Overview, 2. Goals & Non-Goals, 3.1 Nature of the sounds (research finding), 3.2 Asset sourcing (IP note), 3.3 Sound events, 3.4 Design (+9 more)
 
 ### Community 16 - "Phase 1 — Core State Logic — Implementation Report"
-Cohesion: 0.29
-Nodes (6): Commits (Task order), Deviations from the plan and why, Files created, Final `flutter test` output summary, Phase 1 — Core State Logic — Implementation Report, Scope confirmation
+Cohesion: 0.12
+Nodes (16): 10. Out of Scope (This Version) / Deferred, 1. Overview, 2. Goals & Non-Goals, 3. Visual Direction, 4.1 World / parallax background (`lib/game/`), 4.2 Biome system (`lib/state/`), 4.3 HUD chrome (`lib/ui/`), 4.4 HUD color customization (+8 more)
 
 ### Community 23 - "graphify reference: extra exports and benchmark"
 Cohesion: 0.22
@@ -155,25 +163,57 @@ Nodes (3): For git commit hook, For native CLAUDE.md integration, graphify refer
 Cohesion: 0.50
 Nodes (3): For --cluster-only, For --update (incremental re-extraction), graphify reference: incremental update and cluster-only
 
+### Community 30 - "CLAUDE.md"
+Cohesion: 0.12
+Nodes (15): Digimon V-Pet — project guide, How to work here — always use Superpowers, Navigating the code — use graphify, Architecture (current), Build / run, Current app (v0.2) — what it does, Dev helpers (this project), Digimon Game — Progress & Roadmap (+7 more)
+
+### Community 33 - "Procedure"
+Cohesion: 0.20
+Nodes (9): 1. Is a device already connected?, 2. Launch the emulator (only if none connected), 3. Run the app (background — `flutter run` stays alive), 4. Screenshot, 5. Stop when done, Environment, Notes / gotchas, Procedure (+1 more)
+
+### Community 34 - "/vpet-verify"
+Cohesion: 0.29
+Nodes (6): Notes, Reading the result, Run it, The environment (why this skill exists), /vpet-verify, When to use
+
+### Community 35 - "Flutter/Flame Reviewer — Digimon V-Pet"
+Cohesion: 0.33
+Nodes (5): First, orient (don't grep blind), Flutter/Flame Reviewer — Digimon V-Pet, Hard invariants — a violation is at least Important, usually Critical, Output format, Project-specific quality checks
+
+### Community 36 - "Plan 2 — Settings, Lockable HUD Color & Audio — Implementation Plan"
+Cohesion: 0.14
+Nodes (13): File Structure, Global Constraints, Plan 2 — Settings, Lockable HUD Color & Audio — Implementation Plan, Self-Review (against the spec), Task 1: AppPreferences + PreferencesRepository, Task 2: hudAccentFor override, Task 3: SfxEvent + SoundPlayer + AudioService, Task 4: flame_audio player + placeholder beep assets (+5 more)
+
+### Community 37 - "digimon_species.dart"
+Cohesion: 0.05
+Nodes (35): biome.dart, int hp, attack, defense,, Iterable, Biome, afterMs, AnimClip, biome, _byId (+27 more)
+
+### Community 38 - "Global Constraints"
+Cohesion: 0.17
+Nodes (11): Global Constraints, Phase 0+1 — Data-Driven Creatures Foundation — Implementation Plan, Self-Review, Task 1: DigimonSpecies data model (pure), Task 2: species.json seed + asset wiring, Task 3: Pet keyed by speciesId (with migration + LifeStage bridge), Task 4: Data-driven evolution, Task 5: Data-driven sprite rendering (+3 more)
+
+### Community 45 - "pet_component.dart"
+Cohesion: 0.12
+Nodes (15): _base, _loadGen, _play, playReaction, reactBounce, _scale, showFor, _speciesId (+7 more)
+
 ## Knowledge Gaps
-- **220 isolated node(s):** `_currentStage`, `_loadGen`, `stageOf`, `showFor`, `reactBounce` (+215 more)
+- **400 isolated node(s):** `skyTop`, `skyBottom`, `far`, `mid`, `ground` (+395 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **8 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Pet` connect `vpet_game_test.dart` to `vpet_game.dart`, `pet.dart`?**
-  _High betweenness centrality (0.058) - this node is a cross-community bridge._
-- **Why does `PetRepository` connect `pet_repository.dart` to `vpet_game.dart`?**
-  _High betweenness centrality (0.046) - this node is a cross-community bridge._
-- **Why does `Notifications` connect `notifications.dart` to `home_screen.dart`?**
+- **Why does `Notifications` connect `game_config.dart` to `home_screen.dart`?**
+  _High betweenness centrality (0.054) - this node is a cross-community bridge._
+- **Why does `Pet` connect `pet_repository.dart` to `pet_logic.dart`, `vpet_game.dart`, `pet.dart`?**
+  _High betweenness centrality (0.054) - this node is a cross-community bridge._
+- **Why does `SpeciesRegistry` connect `digimon_species.dart` to `vpet_game.dart`?**
   _High betweenness centrality (0.038) - this node is a cross-community bridge._
-- **What connects `_currentStage`, `_loadGen`, `stageOf` to the rest of the system?**
-  _220 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **What connects `skyTop`, `skyBottom`, `far` to the rest of the system?**
+  _400 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Digimon V-Pet Game Implementation Plan` be split into smaller, more focused modules?**
   _Cohesion score 0.06666666666666667 - nodes in this community are weakly interconnected._
 - **Should `vpet_game.dart` be split into smaller, more focused modules?**
-  _Cohesion score 0.06896551724137931 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05405405405405406 - nodes in this community are weakly interconnected._
 - **Should `pet_component.dart` be split into smaller, more focused modules?**
-  _Cohesion score 0.09523809523809523 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.125 - nodes in this community are weakly interconnected._

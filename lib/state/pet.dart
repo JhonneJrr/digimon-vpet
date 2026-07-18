@@ -1,19 +1,18 @@
 // lib/state/pet.dart
 import 'game_config.dart';
 
-enum LifeStage { baby1, baby2, child, adult, perfectMetal, perfectSkull }
-
 enum HealthStatus { healthy, sick }
 
-/// Immutable pet state.
-///
-/// Time-driven stats (hunger, happiness, poop) each carry their own "since"
-/// anchor timestamp — the instant from which the next whole unit is measured.
-/// applyElapsed advances an anchor only by the whole units it actually
-/// consumed, so sub-unit remainders survive across many small ticks (a 1s
-/// Flame tick no longer silently rounds to zero).
+/// Ordered ids of the seed line, indexed by the legacy stage index. Used to
+/// migrate old saves.
+const List<String> _lineIds = [
+  'botamon', 'koromon', 'agumon', 'greymon', 'metalgreymon', 'skullgreymon',
+];
+
+/// Immutable pet state. Identity is [speciesId]; time-driven stats each carry
+/// their own "since" anchor (see applyElapsed).
 class Pet {
-  final LifeStage stage;
+  final String speciesId;
   final int hunger; // 0 = full .. hungerMax = starving
   final int happiness; // 0 = sad .. happinessMax = happy
   final int poopCount;
@@ -27,14 +26,14 @@ class Pet {
   final int poopSinceMs;
 
   // Neglect / illness event timestamps (null = not currently in that state).
-  final int? starvingSinceMs; // when hunger first reached max
-  final int? messySinceMs; // when poop first reached messPoopThreshold
-  final int? sickSinceMs; // when sickness onset
+  final int? starvingSinceMs;
+  final int? messySinceMs;
+  final int? sickSinceMs;
 
   final bool isDead;
 
   const Pet({
-    required this.stage,
+    required this.speciesId,
     required this.hunger,
     required this.happiness,
     required this.poopCount,
@@ -51,7 +50,7 @@ class Pet {
   });
 
   factory Pet.newborn(int nowMs) => Pet(
-        stage: LifeStage.baby1,
+        speciesId: 'botamon',
         hunger: 0,
         happiness: GameConfig.happinessMax,
         poopCount: 0,
@@ -64,7 +63,7 @@ class Pet {
       );
 
   Pet copyWith({
-    LifeStage? stage,
+    String? speciesId,
     int? hunger,
     int? happiness,
     int? poopCount,
@@ -83,7 +82,7 @@ class Pet {
     bool? isDead,
   }) =>
       Pet(
-        stage: stage ?? this.stage,
+        speciesId: speciesId ?? this.speciesId,
         hunger: hunger ?? this.hunger,
         happiness: happiness ?? this.happiness,
         poopCount: poopCount ?? this.poopCount,
@@ -102,7 +101,7 @@ class Pet {
       );
 
   Map<String, dynamic> toJson() => {
-        'stage': stage.index,
+        'speciesId': speciesId,
         'hunger': hunger,
         'happiness': happiness,
         'poopCount': poopCount,
@@ -119,7 +118,8 @@ class Pet {
       };
 
   factory Pet.fromJson(Map<String, dynamic> j) => Pet(
-        stage: LifeStage.values[j['stage'] as int],
+        // New saves carry speciesId; legacy saves carry a `stage` int index.
+        speciesId: j['speciesId'] as String? ?? _lineIds[j['stage'] as int],
         hunger: j['hunger'] as int,
         happiness: j['happiness'] as int,
         poopCount: j['poopCount'] as int,

@@ -64,6 +64,13 @@ flutter:
   assets:
     - assets/sprites/
     - assets/ui/
+    - assets/data/
+    - assets/creatures/botamon/
+    - assets/creatures/koromon/
+    - assets/creatures/agumon/
+    - assets/creatures/greymon/
+    - assets/creatures/metalgreymon/
+    - assets/creatures/skullgreymon/
 
   # To add assets to your application, add an assets section, like this:
   # assets:
