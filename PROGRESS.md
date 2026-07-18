@@ -1,6 +1,6 @@
 # Digimon Game — Progress & Roadmap
 
-_Last updated: 2026-07-17_
+_Last updated: 2026-07-18_
 
 Human-readable status log + roadmap. Specs live in `docs/superpowers/specs/`, plans in
 `docs/superpowers/plans/`, the per-plan execution ledger in `.superpowers/sdd/progress.md`.
@@ -9,21 +9,25 @@ Human-readable status log + roadmap. Specs live in `docs/superpowers/specs/`, pl
 
 ## ▶️ RESUME POINT (read this first after a context clear)
 
-**Branch:** `feat/hud-overhaul-shell` @ `be72d52` (stacked on `feat/sprite-library-taxonomy`;
+**Branch:** `feat/hud-overhaul-shell` @ `4c26798` (stacked on `feat/sprite-library-taxonomy`;
 **nothing merged to `master` this session** — Phase 0+1 is the last thing on master, PR #3).
 
-**This session (2026-07-18) shipped, all committed on the branch above, 69/69 tests + `flutter
+**This session (2026-07-18) shipped, all committed on the branch above, 82/82 tests + `flutter
 analyze` clean + on-device verified:**
-1. **graphify hook fix** — removed the nagging PreToolUse `hook-guard` hooks from `.claude/settings.json`.
-2. **Sprite library reorganization DONE** — 67,755 frames → `organized/` (see §Sprite library).
-3. **HUD overhaul + navigation shell DONE** (see §HUD overhaul) — then iterated after on-device
-   feedback into the **landscape "2nd overhaul": app locked landscape + the real `spr_MainHUD` overlay
-   + the pet ambles the map** (all in §HUD overhaul, bottom bullets).
+1. **graphify hook fix** + **Sprite library reorganization** (67,755 frames → `organized/`) + the
+   **HUD overhaul + navigation shell** and its landscape "2nd overhaul" (see §HUD overhaul).
+2. **Radial care menu + real HUD menu buttons DONE** (see §Radial care menu) — the six hex sockets are
+   now the real `spr_MainButtons_ENG` menu buttons wired to the RoomScreen shell (mapping triangulated
+   from decompiled `obj_MainButtons` GML); the four care actions moved to a **top-arc radial menu that
+   opens on tapping the Digimon** (meat/poop/bandage/ball, real dump art); the pet line was **shrunk
+   ~0.71** so it reads in the landscape. Spec + plan under `docs/superpowers/`; SDD ledger:
+   `.superpowers/sdd/progress.md`.
 
-**In-flight (awaiting the user's pick):** I asked whether to (a) do the **minor HUD calibration**
-(nudge the hex-slot action icons down + move the badges off the level gauge — `lib/ui/hud/hud_overlay.dart`),
-(b) start **heavy mechanics** (Phase 2 battle and/or training, mounting into `RoomScreen.content` / the
-HUD hex slots), or (c) **open a PR** of this branch → `master`.
+**Next step (awaiting the user's pick):** (a) **open a PR** of this branch → `master` (carries the
+sprite-library + HUD-overhaul + radial-care commits), or (b) start **heavy mechanics** (Phase 2 battle
+and/or training, mounting into a socket's `RoomScreen` — Treino/Batalha/Loja/Evo/Database/DigiVice stubs
+already exist). Deferred cleanup (from the final review): delete the now-orphaned `menu_sheet.dart`;
+add a geometry assertion to `pet_tap_target_test`; add a stubbed home-assembly widget test.
 
 - **Git:** **PR #3 merged to `master`** (2026-07-18 UTC). Phase 1 = data-driven creatures on the real
   extracted art; 60/60 tests, `flutter analyze` clean, on-device verified (Botamon idle-animates with
@@ -112,8 +116,30 @@ doors).
   or mid care-reaction.
 - **📌 FUTURE idea (user, 2026-07-18):** swap the home map based on the player's position on the
   **world map** (exploration), instead of biome-driven — belongs to the world/exploration phase.
-- **Calibration TODO (minor):** the hex-slot action icons sit a touch high and the badges slightly
-  overlap the level gauge — fractional tweaks in `hud_overlay.dart`, easy to nudge on-device.
+
+### ✅ Radial care menu + real HUD buttons (DONE — `feat/hud-overhaul-shell`)
+
+Superseded the earlier "care actions on the hex slots" first pass (and its calibration TODO). Spec:
+`docs/superpowers/specs/2026-07-18-radial-care-menu-and-real-hud-buttons-design.md`; plan:
+`docs/superpowers/plans/2026-07-18-radial-care-menu-and-real-hud-buttons.md`. 82/82 tests, analyze
+clean, on-device verified (landscape).
+
+- **Hex sockets = real menu buttons:** the six `spr_MainHUD` sockets now render the real
+  `spr_MainButtons_ENG` frames 0–5 and navigate the RoomScreen shell. Frame→room mapping was
+  triangulated from decompiled `obj_MainButtons` GML (`meta/dump/CodeEntries/…Mouse_7.gml`):
+  0 DigiVice, 1 Shop/Loja, 2 Training/Treino, 3 Evolution/Evo, 4 Database, 5 Digitize-Battle/Batalha
+  (frame 6 Battle-Items is battle-context, not on home). `kRooms` is the six socket-ordered rooms
+  (`lib/ui/hud/hud_overlay.dart` `_socketX`/`onOpenRoom`; `lib/ui/shell/room_config.dart`). The old
+  `☰`/`showMenuSheet` is retired from home (`menu_sheet.dart` orphaned — cleanup pending). Mapa dropped
+  from the sockets (returns in the world/exploration phase).
+- **Care loop → radial menu:** tapping the Digimon opens a top-arc menu of the four care actions
+  (`lib/ui/hud/care_radial.dart`, pure widget; `lib/ui/hud/pet_tap_target.dart` = the tap zone).
+  Real dump art: Feed `spr_Meat_0`, Clean `spr_poop_0`, Medicine `spr_Items_3` (the **Bandage** item),
+  Play `spr_Ball_0` (copied via `copy_app_assets.sh` → `assets/game/ui/{menu_buttons,care}/`). Wander
+  pauses while the menu is open (`VpetGame.careMenuOpen`); the anchor tracks a walking pet per-frame via
+  `VpetGame.petAnchorX` (`ValueNotifier`) + a `ValueListenableBuilder` (final-review fix).
+- **Pet scale rebalance (data-only):** `species.json displayHeight` shrunk ~0.71 across the line
+  (Botamon 64→45 … MetalGreymon 180→128) so the pet reads as a creature in the landscape.
 
 ---
 
