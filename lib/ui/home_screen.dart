@@ -2,17 +2,12 @@
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
 import '../game/vpet_game.dart';
-import '../state/biome.dart';
-import '../state/digimon_species.dart';
 import '../state/notifications.dart';
 import '../state/pet.dart';
 import '../state/pet_repository.dart';
 import 'death_screen.dart';
-import 'hud_theme.dart';
+import 'hud/hud_overlay.dart';
 import 'shell/menu_sheet.dart';
-import 'widgets/action_dock.dart';
-import 'widgets/status_badges.dart';
-import 'widgets/top_status_bar.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -70,70 +65,44 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    // The game is landscape: a 538x300 stage (the real map + MainHUD aspect)
+    // centred in the screen with dark side bars, so nothing distorts.
     return Scaffold(
-      backgroundColor: const Color(0xFF0D0B17),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            children: [
-              _topBar(),
-              const SizedBox(height: 10),
-              // Framed "stage": a wide scene window showing most of the real map,
-              // with the pet ambling in it. Centred in the free vertical space.
-              Expanded(child: Center(child: _stage())),
-              const SizedBox(height: 10),
-              _dock(),
-            ],
+      backgroundColor: const Color(0xFF07060D),
+      body: Center(
+        child: AspectRatio(
+          aspectRatio: 538 / 300,
+          child: ClipRect(
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                GameWidget(game: game),
+                _hud(),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _stage() {
-    return AspectRatio(
-      aspectRatio: 3 / 2,
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: const Color(0x33FFFFFF)),
-          boxShadow: const [
-            BoxShadow(
-                color: Color(0x66000000), blurRadius: 18, offset: Offset(0, 8)),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(17),
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              GameWidget(game: game),
-              Positioned(
-                top: 8,
-                right: 8,
-                child: StatusBadges(pet: _petOrNull()),
-              ),
-            ],
-          ),
-        ),
-      ),
+  Widget _hud() {
+    final ready = game.isReady;
+    final p = ready ? game.pet : null;
+    final name = ready ? game.currentSpecies.name : 'Botamon';
+    return HudOverlay(
+      name: name,
+      pet: _petOrNull(),
+      onFeed: game.feed,
+      onClean: game.clean,
+      onMedicine: game.medicine,
+      onPlay: game.play,
+      onMenu: () => showMenuSheet(context),
+      feedEnabled: p != null && p.hunger > 0,
+      cleanEnabled: p != null && p.poopCount > 0,
+      medicineEnabled: p != null && p.health == HealthStatus.sick,
+      playEnabled: p != null,
     );
-  }
-
-  Widget _topBar() {
-    if (game.isReady) {
-      final DigimonSpecies sp = game.currentSpecies;
-      return TopStatusBar(
-          label: sp.name,
-          accent: hudAccentFor(sp.biome),
-          onMenu: () => showMenuSheet(context));
-    }
-    // Pre-load neutral default (mirrors the newborn fallback intent).
-    return TopStatusBar(
-        label: 'Botamon',
-        accent: hudAccentFor(Biome.nursery),
-        onMenu: () => showMenuSheet(context));
   }
 
   Pet _petOrNull() {
@@ -144,20 +113,5 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     } catch (_) {
       return Pet.newborn(0);
     }
-  }
-
-  Widget _dock() {
-    final ready = game.isReady;
-    final p = ready ? game.pet : null;
-    return ActionDock(
-      onFeed: game.feed,
-      onClean: game.clean,
-      onMedicine: game.medicine,
-      onPlay: game.play,
-      feedEnabled: p != null && p.hunger > 0,
-      cleanEnabled: p != null && p.poopCount > 0,
-      medicineEnabled: p != null && p.health == HealthStatus.sick,
-      playEnabled: p != null,
-    );
   }
 }
