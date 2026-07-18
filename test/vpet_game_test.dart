@@ -96,9 +96,53 @@ void main() {
     // ignore: invalid_use_of_internal_member
     game.mount();
     game.update(0);
-    expect(game.worldBackground.isMounted, isTrue);
+    expect(game.mapBackground.isMounted, isTrue);
     expect(game.currentBiome, Biome.nursery); // newborn = baby1
     // Pet anchored to its feet, below vertical center (on the ground band).
     expect(game.petComponent.position.y, greaterThan(game.size.y / 2));
+  });
+
+  test('pet anchor getters expose fractional position after load', () async {
+    final game = VpetGame(repo: _FakeRepo(), clock: () => 0);
+    game.onGameResize(Vector2(400, 600));
+    await game.onLoad();
+    // Newborn = Botamon in the nursery biome (ground fraction 0.78).
+    expect(game.petGroundFraction, 0.78);
+    // Botamon displayHeight 45 over a 600-tall stage.
+    expect(game.petHeightFraction, closeTo(45 / 600, 1e-9));
+    expect(game.petAnchorXFraction, inInclusiveRange(0.0, 1.0));
+  });
+
+  test('careMenuOpen pauses the pet wander (position x holds)', () async {
+    final game = VpetGame(repo: _FakeRepo(), clock: () => 0);
+    game.onGameResize(Vector2(400, 600));
+    await game.onLoad();
+    // ignore: invalid_use_of_internal_member
+    game.mount();
+    game.update(0);
+    game.careMenuOpen = true;
+    final x0 = game.petComponent.position.x;
+    for (var i = 0; i < 30; i++) {
+      game.update(0.5);
+    }
+    expect(game.petComponent.position.x, x0,
+        reason: 'wander must not advance while the care menu is open');
+  });
+
+  test('petAnchorX notifier tracks petAnchorXFraction after wander moves',
+      () async {
+    final game = VpetGame(repo: _FakeRepo(), clock: () => 0);
+    game.onGameResize(Vector2(400, 600));
+    await game.onLoad();
+    // ignore: invalid_use_of_internal_member
+    game.mount();
+    game.update(0);
+    for (var i = 0; i < 30; i++) {
+      game.update(0.5);
+    }
+    expect(game.petAnchorX.value, game.petAnchorXFraction,
+        reason: 'the per-frame anchor notifier must stay in sync with the '
+            'fractional getter used to position the tap hitbox');
+    expect(game.petAnchorX.value, inInclusiveRange(0.0, 1.0));
   });
 }

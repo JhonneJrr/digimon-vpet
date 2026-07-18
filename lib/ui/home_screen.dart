@@ -2,16 +2,14 @@
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
 import '../game/vpet_game.dart';
-import '../state/biome.dart';
-import '../state/digimon_species.dart';
 import '../state/notifications.dart';
 import '../state/pet.dart';
 import '../state/pet_repository.dart';
 import 'death_screen.dart';
-import 'hud_theme.dart';
-import 'widgets/action_dock.dart';
-import 'widgets/status_badges.dart';
-import 'widgets/top_status_bar.dart';
+import 'hud/care_radial.dart';
+import 'hud/hud_overlay.dart';
+import 'hud/pet_tap_target.dart';
+import 'shell/room_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,6 +20,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   late final VpetGame game;
   final Notifications _notifications = Notifications();
+  bool _careOpen = false;
 
   @override
   void initState() {
@@ -69,44 +68,97 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    // The game is landscape: a 538x300 stage (the real map + MainHUD aspect)
+    // centred in the screen with dark side bars, so nothing distorts.
     return Scaffold(
-      backgroundColor: const Color(0xFF1A1420),
-      body: Stack(
-        children: [
-          Positioned.fill(child: GameWidget(game: game)),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                children: [
-                  _topBar(),
-                  const SizedBox(height: 8),
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: StatusBadges(pet: _petOrNull()),
+      backgroundColor: const Color(0xFF07060D),
+      body: Center(
+        child: AspectRatio(
+          aspectRatio: 538 / 300,
+          child: ClipRect(
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                GameWidget(game: game),
+                // Tap the pet to toggle the care radial. Rebuilt from
+                // game.petAnchorX (updated every frame) rather than the
+                // ~1x/sec onPetChanged tick, so the hitbox tracks a walking
+                // pet instead of lagging up to ~40px behind it.
+                if (game.isReady)
+                  ValueListenableBuilder<double>(
+                    valueListenable: game.petAnchorX,
+                    builder: (context, ax, _) => PetTapTarget(
+                      anchorX: ax,
+                      groundFraction: game.petGroundFraction,
+                      heightFraction: game.petHeightFraction,
+                      onTap: _toggleCare,
+                    ),
                   ),
-                  const Spacer(),
-                  _dock(),
-                ],
-              ),
+                // Close-catcher behind the bubbles while the menu is open.
+                if (_careOpen)
+                  Positioned.fill(
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: _closeCare,
+                    ),
+                  ),
+                _careRadial(),
+                _hud(),
+              ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _topBar() {
-    if (game.isReady) {
-      final DigimonSpecies sp = game.currentSpecies;
-      return TopStatusBar(
-          label: sp.name, accent: hudAccentFor(sp.biome), onSettings: null);
-    }
-    // Pre-load neutral default (mirrors the newborn fallback intent).
-    return TopStatusBar(
-        label: 'Botamon',
-        accent: hudAccentFor(Biome.nursery),
-        onSettings: null);
+  void _toggleCare() => _setCare(!_careOpen);
+  void _closeCare() => _setCare(false);
+  void _setCare(bool open) {
+    setState(() => _careOpen = open);
+    game.careMenuOpen = open;
+  }
+
+  Future<void> _doCare(Future<void> Function() action) async {
+    _closeCare();
+    await action();
+  }
+
+  Widget _careRadial() {
+    final ready = game.isReady;
+    final p = ready ? game.pet : null;
+    final anchorX = ready ? game.petAnchorXFraction : 0.5;
+    // Anchor the arc on the pet's mid-body (feet minus half its height).
+    final anchorY = ready
+        ? (game.petGroundFraction - game.petHeightFraction * 0.5)
+        : 0.6;
+    return CareRadial(
+      open: _careOpen,
+      anchorX: anchorX,
+      anchorY: anchorY,
+      feedEnabled: p != null && p.hunger > 0,
+      cleanEnabled: p != null && p.poopCount > 0,
+      medicineEnabled: p != null && p.health == HealthStatus.sick,
+      playEnabled: p != null,
+      onFeed: () => _doCare(game.feed),
+      onClean: () => _doCare(game.clean),
+      onMedicine: () => _doCare(game.medicine),
+      onPlay: () => _doCare(game.play),
+    );
+  }
+
+  Widget _hud() {
+    final ready = game.isReady;
+    final name = ready ? game.currentSpecies.name : 'Botamon';
+    return HudOverlay(
+      name: name,
+      pet: _petOrNull(),
+      onOpenRoom: (room) {
+        _closeCare();
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (_) => RoomScreen(config: room)));
+      },
+    );
   }
 
   Pet _petOrNull() {
@@ -117,20 +169,5 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     } catch (_) {
       return Pet.newborn(0);
     }
-  }
-
-  Widget _dock() {
-    final ready = game.isReady;
-    final p = ready ? game.pet : null;
-    return ActionDock(
-      onFeed: game.feed,
-      onClean: game.clean,
-      onMedicine: game.medicine,
-      onPlay: game.play,
-      feedEnabled: p != null && p.hunger > 0,
-      cleanEnabled: p != null && p.poopCount > 0,
-      medicineEnabled: p != null && p.health == HealthStatus.sick,
-      playEnabled: p != null,
-    );
   }
 }

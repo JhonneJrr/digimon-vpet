@@ -11,9 +11,9 @@ import '../state/digimon_species.dart';
 import '../state/pet.dart';
 import '../state/pet_logic.dart';
 import '../state/pet_repository.dart';
-import 'biome_palette.dart';
+import 'map_background.dart';
 import 'pet_component.dart';
-import 'world_background.dart';
+import 'wander.dart';
 
 /// Top-level Flame game: owns the [Pet] state, ticks it forward once per
 /// second while running, persists it, and renders it via [PetComponent].
@@ -31,10 +31,11 @@ class VpetGame extends FlameGame {
   final PetRepository repo;
   final int Function() _clock;
   final PetComponent petComponent = PetComponent();
-  // Named `worldBackground`, not `world`: FlameGame already defines a `world`
-  // member (the camera's `World` component), and this is a plain background
-  // component, not a Flame `World` subclass.
-  final WorldBackground worldBackground = WorldBackground();
+  // The real biome map behind the pet (replaces the old procedural world).
+  final MapBackgroundComponent mapBackground = MapBackgroundComponent();
+  /// Drives the pet's idle ambling within the scene's walkable ground band.
+  final WanderController wander = WanderController();
+  Biome? _placedBiome;
 
   late Pet pet;
 
@@ -59,9 +60,32 @@ class VpetGame extends FlameGame {
   VoidCallback? onPetChanged;
   VoidCallback? onDeath;
 
+  /// The pet's centre-x fraction, updated every frame (unlike [onPetChanged],
+  /// which only fires ~1x/sec). Lets the tap hitbox track a walking pet
+  /// instead of lagging up to ~40px behind it between ticks.
+  final ValueNotifier<double> petAnchorX = ValueNotifier<double>(0.5);
+
+  /// When true, the pet holds still (the care radial menu is open above it).
+  bool careMenuOpen = false;
+
   int nowMs() => _clock();
 
   Biome get currentBiome => currentSpecies.biome;
+
+  /// The pet's centre x as a fraction of stage width (0.5 before layout).
+  double get petAnchorXFraction {
+    final w = size.x;
+    return w == 0 ? 0.5 : (wander.x / w).clamp(0.0, 1.0);
+  }
+
+  /// The biome's ground line (the pet's feet), as a fraction of stage height.
+  double get petGroundFraction => groundFractionForBiome(currentBiome);
+
+  /// The pet's on-screen height as a fraction of stage height (0 before layout).
+  double get petHeightFraction {
+    final h = size.y;
+    return h == 0 ? 0 : currentSpecies.sprite.displayHeight / h;
+  }
 
   bool get _isSick => pet.health == HealthStatus.sick;
 
@@ -86,16 +110,16 @@ class VpetGame extends FlameGame {
     pet = PetLogic.checkEvolution(
         PetLogic.applyElapsed(pet, nowMs()), nowMs(), _species);
 
-    worldBackground.priority = -1; // behind everything
-    await add(worldBackground);
-    worldBackground.applyPalette(paletteForBiome(currentBiome));
+    mapBackground.priority = -1; // behind everything
+    await add(mapBackground);
+    await mapBackground.applyBiome(currentBiome);
 
     petComponent.anchor = Anchor.bottomCenter;
-    petComponent.position = _petFootPosition();
     petComponent.priority = 10;
     // Attach to the tree before showFor(): PetComponent's HasGameReference
     // resolves `game` via the parent chain, which only exists once added.
     add(petComponent);
+    _placeForBiome(initial: true);
     await petComponent.showFor(currentSpecies, sick: _isSick);
     petComponent.startIdlePulse();
 
@@ -103,29 +127,55 @@ class VpetGame extends FlameGame {
     await _persistAndNotify();
   }
 
-  /// The pet's feet rest just above the ground horizon line.
-  Vector2 _petFootPosition() =>
-      Vector2(size.x / 2, size.y * (1 - groundTopFraction) + 6);
+  /// Set the walkable band + ground height for the current biome. Keeps the
+  /// pet's current x on a re-place (evolve/resize) so it doesn't teleport;
+  /// [initial] centres it instead.
+  void _placeForBiome({bool initial = false}) {
+    final minX = size.x * 0.14;
+    final maxX = size.x * 0.86;
+    wander.setBand(minX, maxX, startX: initial ? size.x / 2 : null);
+    petComponent.position =
+        Vector2(wander.x, size.y * groundFractionForBiome(currentBiome));
+    _placedBiome = currentBiome;
+  }
 
   @override
   void onGameResize(Vector2 size) {
     super.onGameResize(size);
-    if (petComponent.isMounted) {
-      petComponent.position = _petFootPosition();
+    if (isReady && petComponent.isMounted) {
+      _placeForBiome();
     }
   }
 
   @override
   void update(double dt) {
     super.update(dt);
-    if (pet.isDead) return;
+    if (!isReady || pet.isDead) return;
+
+    // Per-frame life: amble along the ground (unless sick or mid-reaction) and
+    // keep the sprite's loop + facing in sync with the motion.
+    final sick = _isSick;
+    if (!sick && !petComponent.isReacting && !careMenuOpen) {
+      wander.update(dt);
+      petComponent.position.x = wander.x;
+      petComponent.setFacing(wander.facing);
+    }
+    petComponent.setLoop(
+      currentSpecies,
+      sick ? CareAnim.sick : (wander.isWalking ? CareAnim.walk : CareAnim.idle),
+    );
+    petAnchorX.value = petAnchorXFraction;
+
+    // Once a second: advance needs/evolution; swap the map on a biome change.
     _accum += dt;
     if (_accum >= 1.0) {
       _accum = 0;
       pet = PetLogic.checkEvolution(
           PetLogic.applyElapsed(pet, nowMs()), nowMs(), _species);
-      worldBackground.applyPalette(paletteForBiome(currentBiome));
-      petComponent.showFor(currentSpecies, sick: _isSick);
+      if (currentBiome != _placedBiome) {
+        mapBackground.applyBiome(currentBiome); // no-op unless changed
+        _placeForBiome();
+      }
       _persistAndNotify();
     }
   }
@@ -167,8 +217,15 @@ class VpetGame extends FlameGame {
 
   Future<void> restart() async {
     pet = Pet.newborn(nowMs());
-    worldBackground.applyPalette(paletteForBiome(currentBiome));
+    await mapBackground.applyBiome(currentBiome);
+    _placeForBiome(initial: true);
     await petComponent.showFor(currentSpecies, sick: _isSick);
     await _persistAndNotify();
+  }
+
+  @override
+  void onRemove() {
+    petAnchorX.dispose();
+    super.onRemove();
   }
 }

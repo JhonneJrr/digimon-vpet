@@ -1,27 +1,5 @@
 {
   "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "shell": "bash",
-            "command": "\"/c/Users/felip/AppData/Roaming/Python/Python314/Scripts/graphify.exe\" hook-guard search 2>/dev/null || true"
-          }
-        ]
-      },
-      {
-        "matcher": "Read|Glob",
-        "hooks": [
-          {
-            "type": "command",
-            "shell": "bash",
-            "command": "\"/c/Users/felip/AppData/Roaming/Python/Python314/Scripts/graphify.exe\" hook-guard read 2>/dev/null || true"
-          }
-        ]
-      }
-    ],
     "PostToolUse": [
       {
         "matcher": "Edit|Write|MultiEdit",
