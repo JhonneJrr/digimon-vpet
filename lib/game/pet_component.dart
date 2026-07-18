@@ -47,13 +47,18 @@ class PetComponent extends SpriteAnimationComponent with HasGameReference {
       sprites.add(Sprite(img));
     }
     if (gen != _loadGen) return; // a newer _play superseded us
+    if (sprites.isEmpty) return; // misconfigured species: fail safe
     final loop = oneShotThenBase ? false : clip.loop;
     animation =
         SpriteAnimation.spriteList(sprites, stepTime: clip.stepTime, loop: loop);
     size = sprites.first.srcSize * _scale;
     if (oneShotThenBase) {
-      // When the one-shot finishes, fall back to the current base state.
-      animationTicker?.onComplete = () => _play(species, _base);
+      // When the one-shot finishes, fall back to the current base state —
+      // but only if no newer species has taken over in the meantime, or a
+      // mid-reaction evolution would leave the pet stuck on the old species.
+      animationTicker?.onComplete = () {
+        if (species.id == _speciesId) _play(species, _base);
+      };
     }
   }
 

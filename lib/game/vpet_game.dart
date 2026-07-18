@@ -20,11 +20,11 @@ import 'world_background.dart';
 class VpetGame extends FlameGame {
   VpetGame({required this.repo, int Function()? clock})
     : _clock = clock ?? (() => DateTime.now().millisecondsSinceEpoch) {
-    // sprite_map.dart paths are relative to assets/ (e.g. "sprites/Botamon
-    // .png"), not Flame's default "assets/images/" prefix, and this project
-    // bundles them under assets/sprites/ + assets/ui/. Use a dedicated cache
-    // (rather than mutating the global Flame.images) so this doesn't leak
-    // across game instances or tests.
+    // PetComponent loads creature animation frames by convention
+    // (creatures/<speciesId>/<state>_<i>.png) via game.images, relative to
+    // assets/ (not Flame's default "assets/images/" prefix). Use a dedicated
+    // cache (rather than mutating the global Flame.images) so this doesn't
+    // leak across game instances or tests.
     images = Images(prefix: 'assets/');
   }
 
@@ -63,6 +63,8 @@ class VpetGame extends FlameGame {
 
   Biome get currentBiome => biomeForStage(pet.stage);
 
+  bool get _isSick => pet.health == HealthStatus.sick;
+
   @override
   Color backgroundColor() => const Color(0xFF9BBC0F); // LCD green, matches UI
 
@@ -89,8 +91,7 @@ class VpetGame extends FlameGame {
     // Attach to the tree before showFor(): PetComponent's HasGameReference
     // resolves `game` via the parent chain, which only exists once added.
     add(petComponent);
-    await petComponent.showFor(currentSpecies,
-        sick: pet.health == HealthStatus.sick);
+    await petComponent.showFor(currentSpecies, sick: _isSick);
     petComponent.startIdlePulse();
 
     isReady = true;
@@ -119,8 +120,7 @@ class VpetGame extends FlameGame {
       pet = PetLogic.checkEvolution(
           PetLogic.applyElapsed(pet, nowMs()), nowMs(), _species);
       worldBackground.applyPalette(paletteForBiome(currentBiome));
-      petComponent.showFor(currentSpecies,
-          sick: pet.health == HealthStatus.sick);
+      petComponent.showFor(currentSpecies, sick: _isSick);
       _persistAndNotify();
     }
   }
@@ -149,8 +149,7 @@ class VpetGame extends FlameGame {
     if (reaction != null) {
       await petComponent.playReaction(currentSpecies, reaction);
     } else {
-      await petComponent.showFor(currentSpecies,
-          sick: pet.health == HealthStatus.sick);
+      await petComponent.showFor(currentSpecies, sick: _isSick);
     }
     petComponent.reactBounce();
     await _persistAndNotify();
@@ -164,8 +163,7 @@ class VpetGame extends FlameGame {
   Future<void> restart() async {
     pet = Pet.newborn(nowMs());
     worldBackground.applyPalette(paletteForBiome(currentBiome));
-    await petComponent.showFor(currentSpecies,
-        sick: pet.health == HealthStatus.sick);
+    await petComponent.showFor(currentSpecies, sick: _isSick);
     await _persistAndNotify();
   }
 }
