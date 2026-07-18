@@ -9,13 +9,14 @@ Human-readable status log + roadmap. Specs live in `docs/superpowers/specs/`, pl
 
 ## ▶️ RESUME POINT (read this first after a context clear)
 
-**Where we are:** **Phase 0+1 (data-driven creatures) is COMPLETE** — built, reviewed, and
-verified on-device (real art animating).
+**Where we are:** **Phase 0+1 (data-driven creatures) is DONE and MERGED to `master`** (PR #3).
+**Sprite library reorganization is DONE** (branch `feat/sprite-library-taxonomy`) — the 67,755
+extracted frames are now a browsable `organized/` library (see §Sprite library below). Next up:
+**pick Phase 2 (battle system)** or a HUD/design overhaul using the extracted UI/battle art.
 
-- **Git:** branch **`feat/phase1-data-driven-creatures`**, HEAD `e538482`. All 8 code tasks done +
-  a whole-branch final review ("MERGE AFTER FIXES") whose one-line fix was applied. **60/60 tests,
-  `flutter analyze` clean.** On-device: Botamon renders + idle-animates with the real extracted art;
-  the HUD reads the species name; nursery biome palette. Ledger: `.superpowers/sdd/progress.md`.
+- **Git:** **PR #3 merged to `master`** (2026-07-18 UTC). Phase 1 = data-driven creatures on the real
+  extracted art; 60/60 tests, `flutter analyze` clean, on-device verified (Botamon idle-animates with
+  the real art, HUD reads the species name, nursery biome). Ledger: `.superpowers/sdd/progress.md`.
 - **The pivot:** rebuilding the user's own game "Digital Tamers Reborn" as a modern Flutter/Flame
   game, a multi-phase PROGRAM (see §Roadmap).
 - **✅ ART SOURCE DECIDED (2026-07-17):** the full art is recovered. From **v2** of the game
@@ -32,10 +33,29 @@ verified on-device (real art animating).
   data-driven architecture was built to consume them, and we keep the tested logic layer + agentic
   workflow. GameMaker was considered and rejected (restart from scratch, weaker dev/agentic +
   version-control workflow, export licensing, closer to cloning the original than building ours).
-- **NEXT ACTION:** Phase 1 done → push branch + open PR. Then pick the next phase: **battle system**
-  (Phase 2), or a **design/HUD overhaul** using the extracted button/power/HUD/background art +
-  care-state animations rolled out to the rest of the roster. The full art + `digimon-id-map.md`
-  (658/665 ids mapped) are ready to scale beyond the one line.
+- **NEXT ACTION:** pick **Phase 2 (battle system)** — the extracted battle sprites (`b###`) and
+  effects are now organized under `digimon/<name>/battle/` and `organized/effects/`. Or do a HUD/
+  design overhaul using `organized/ui` + `organized/backgrounds`. Each is a fresh brainstorm → spec →
+  plan → build cycle.
+
+### ✅ Sprite library (DONE — `feat/sprite-library-taxonomy`)
+
+Reorganized the 67,755 flat frames in `DigitalTamers02_extracted/sprites/` into a browsable
+`DigitalTamers02_extracted/organized/` (git-ignored, IP). **Hybrid name+line taxonomy**, built by
+`tools/sprite-library/` (versioned, reproducible). Spec:
+`docs/superpowers/specs/2026-07-17-sprite-line-taxonomy-design.md`.
+
+- `organized/digimon/<name>/` — **666** Digimon, one folder each; `<pose>/` overworld + `battle/<pose>/`
+  battle frames. Say a name → open its folder (e.g. `digimon/agumon/`).
+- `organized/lines/<rookie>/` — **7 hand-curated** evolution families (agumon, gabumon, guilmon,
+  patamon, v-mon, renamon, impmon) as directory junctions, each with its **canonical predisposed baby
+  chain** and every spine edge verified reachable in the game's evolution graph. Add more via
+  `tools/sprite-library/curated_lines.json`.
+- `organized/{ui,effects,backgrounds,items,npcs,misc}` — non-Digimon art (1005 `spr_` classified,
+  312 → misc).
+- **Key findings:** `b<N>` battle sprites map 1:1 to `d<N>` ids (confirmed via GML `sprite_index =
+  b3_idle`); the evolution graph is a dense **522-node mesh** (no clean auto-lines → curation).
+  Materialized with hardlinks + junctions (~0 extra disk; `sprites/` untouched).
 
 ---
 
