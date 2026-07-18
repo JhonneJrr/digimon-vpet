@@ -76,7 +76,12 @@ class VpetGame extends FlameGame {
         jsonDecode(jsonStr) as Map<String, dynamic>);
     pet = saved ?? Pet.newborn(nowMs());
     if (!_species.contains(pet.speciesId)) {
-      pet = pet.copyWith(speciesId: 'botamon'); // normalize corrupt/removed id
+      // Corrupt/removed species id: fall back to the line start AND reset the
+      // stage clock — otherwise a stale stageStartedAtMs would instant-cascade
+      // the freshly-reset Botamon through every stage on the next check.
+      debugPrint(
+          'VpetGame: unknown speciesId "${pet.speciesId}" -> reset to botamon');
+      pet = pet.copyWith(speciesId: 'botamon', stageStartedAtMs: nowMs());
     }
     pet = PetLogic.checkEvolution(
         PetLogic.applyElapsed(pet, nowMs()), nowMs(), _species);
