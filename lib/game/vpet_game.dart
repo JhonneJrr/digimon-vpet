@@ -60,6 +60,11 @@ class VpetGame extends FlameGame {
   VoidCallback? onPetChanged;
   VoidCallback? onDeath;
 
+  /// The pet's centre-x fraction, updated every frame (unlike [onPetChanged],
+  /// which only fires ~1x/sec). Lets the tap hitbox track a walking pet
+  /// instead of lagging up to ~40px behind it between ticks.
+  final ValueNotifier<double> petAnchorX = ValueNotifier<double>(0.5);
+
   /// When true, the pet holds still (the care radial menu is open above it).
   bool careMenuOpen = false;
 
@@ -159,6 +164,7 @@ class VpetGame extends FlameGame {
       currentSpecies,
       sick ? CareAnim.sick : (wander.isWalking ? CareAnim.walk : CareAnim.idle),
     );
+    petAnchorX.value = petAnchorXFraction;
 
     // Once a second: advance needs/evolution; swap the map on a biome change.
     _accum += dt;
@@ -215,5 +221,11 @@ class VpetGame extends FlameGame {
     _placeForBiome(initial: true);
     await petComponent.showFor(currentSpecies, sick: _isSick);
     await _persistAndNotify();
+  }
+
+  @override
+  void onRemove() {
+    petAnchorX.dispose();
+    super.onRemove();
   }
 }

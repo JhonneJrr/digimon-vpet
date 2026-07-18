@@ -80,13 +80,19 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               fit: StackFit.expand,
               children: [
                 GameWidget(game: game),
-                // Tap the pet to toggle the care radial.
+                // Tap the pet to toggle the care radial. Rebuilt from
+                // game.petAnchorX (updated every frame) rather than the
+                // ~1x/sec onPetChanged tick, so the hitbox tracks a walking
+                // pet instead of lagging up to ~40px behind it.
                 if (game.isReady)
-                  PetTapTarget(
-                    anchorX: game.petAnchorXFraction,
-                    groundFraction: game.petGroundFraction,
-                    heightFraction: game.petHeightFraction,
-                    onTap: _toggleCare,
+                  ValueListenableBuilder<double>(
+                    valueListenable: game.petAnchorX,
+                    builder: (context, ax, _) => PetTapTarget(
+                      anchorX: ax,
+                      groundFraction: game.petGroundFraction,
+                      heightFraction: game.petHeightFraction,
+                      onTap: _toggleCare,
+                    ),
                   ),
                 // Close-catcher behind the bubbles while the menu is open.
                 if (_careOpen)
