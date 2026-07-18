@@ -144,3 +144,4 @@ Plan: docs/superpowers/plans/2026-07-18-radial-care-menu-and-real-hud-buttons.md
 - Minor #4 (defer): home-assembly (toggle/careMenuOpen sync/care callbacks) has no widget test; on-device only.
 - FINAL-REVIEW FIX (Important #1): applied 9790ca9..4c26798 (per-frame petAnchorX ValueNotifier + ValueListenableBuilder; disposed in onRemove). Full suite 82/82, analyze clean. Controller-verified diff. HEAD 4c26798.
 - Task 9 verify + on-device: DONE. On-device confirmed (landscape): 6 real menu buttons seat in sockets; tapping the pet opens the top-arc radial (meat/poop/bandage/ball) no HUD collision; pet reads small; Training socket -> Treino 'em breve' room. Full suite 82/82, analyze clean.
+- MERGED + PUSHED: master 451bb51..95706f5 (merge commit 95706f5). Plan COMPLETE. feat/hud-overhaul-shell fully merged. 81/81 tests, analyze clean on merged master.
