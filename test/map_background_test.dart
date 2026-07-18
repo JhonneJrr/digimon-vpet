@@ -14,4 +14,11 @@ void main() {
     final all = Biome.values.map(mapAssetForBiome).toSet();
     expect(all.length, Biome.values.length);
   });
+  test('every biome has a plausible ground fraction', () {
+    for (final b in Biome.values) {
+      final f = groundFractionForBiome(b);
+      expect(f, greaterThan(0.0));
+      expect(f, lessThan(1.0));
+    }
+  });
 }

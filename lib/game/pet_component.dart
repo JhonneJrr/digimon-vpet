@@ -4,86 +4,106 @@ import 'package:flame/effects.dart';
 import 'package:flutter/animation.dart' show Curves;
 import '../state/digimon_species.dart';
 
-/// Renders the pet as a per-care-state animation built from the species'
-/// [CreatureSprite]. A looping base state (idle, or sick when unwell) plus
-/// one-shot eat/happy reactions. Frame images are loaded by convention:
-/// `creatures/<speciesId>/<state>_<i>.png`.
+/// Renders the pet from the species' [CreatureSprite]. Two kinds of animation:
+/// a looping *locomotion* state (idle / walk / sick) driven each frame by the
+/// game, and one-shot *reactions* (eat / happy) that play once then return to
+/// the current loop. Frames load by convention: `creatures/<id>/<state>_<i>.png`.
 class PetComponent extends SpriteAnimationComponent with HasGameReference {
   String? _speciesId;
-  CareAnim _base = CareAnim.idle;
+  CareAnim _loop = CareAnim.idle; // desired looping state
+  CareAnim? _playing; // resolved state currently animating (null until first play)
+  bool _reacting = false;
+  int _facing = 1; // 1 = right, -1 = left (art faces right by default)
   double _scale = 1;
   int _loadGen = 0;
 
-  /// Show [species] at its base state (sick loop if [sick], else idle loop).
-  /// No-op when species AND base are unchanged, so a per-tick call never
-  /// interrupts a running reaction or restarts the loop.
-  Future<void> showFor(DigimonSpecies species, {required bool sick}) async {
-    final desiredBase = sick ? CareAnim.sick : CareAnim.idle;
-    if (species.id == _speciesId && desiredBase == _base && animation != null) {
+  /// True while a one-shot reaction is playing — the game pauses wandering.
+  bool get isReacting => _reacting;
+
+  /// Set the looping state (idle/walk/sick). Idempotent: a per-frame call in the
+  /// steady state is a no-op, so it never restarts the loop or fights a reaction.
+  Future<void> setLoop(DigimonSpecies species, CareAnim state) async {
+    final resolved = species.sprite.resolve(state); // missing state -> idle
+    final speciesChanged = species.id != _speciesId;
+    if (!speciesChanged &&
+        _loop == state &&
+        _playing == resolved &&
+        !_reacting &&
+        animation != null) {
       return; // steady state
     }
-    final speciesChanged = species.id != _speciesId;
     _speciesId = species.id;
-    _base = desiredBase;
+    _loop = state;
     if (speciesChanged) {
       final idleImg = await game.images.load('creatures/${species.id}/idle_0.png');
       _scale = species.sprite.displayHeight / idleImg.height;
     }
-    await _play(species, _base);
+    if (_reacting) return; // a reaction owns the sprite; it resumes _loop on finish
+    await _playResolved(species, resolved, loop: true);
   }
 
-  /// Play a one-shot [reaction] (e.g. eat/happy), then return to the base state.
-  Future<void> playReaction(DigimonSpecies species, CareAnim reaction) =>
-      _play(species, reaction, oneShotThenBase: true);
+  /// Convenience wrapper kept for existing callers: idle, or sick when unwell.
+  Future<void> showFor(DigimonSpecies species, {required bool sick}) =>
+      setLoop(species, sick ? CareAnim.sick : CareAnim.idle);
 
-  Future<void> _play(DigimonSpecies species, CareAnim state,
-      {bool oneShotThenBase = false}) async {
+  /// Play a one-shot [reaction] (eat/happy), then fall back to the current loop.
+  Future<void> playReaction(DigimonSpecies species, CareAnim reaction) async {
+    _reacting = true;
+    final resolved = species.sprite.resolve(reaction);
+    await _playResolved(species, resolved, loop: false, onComplete: () {
+      _reacting = false;
+      if (species.id == _speciesId) {
+        _playResolved(species, species.sprite.resolve(_loop), loop: true);
+      }
+    });
+  }
+
+  Future<void> _playResolved(DigimonSpecies species, CareAnim resolved,
+      {required bool loop, void Function()? onComplete}) async {
     final gen = ++_loadGen;
-    final eff = species.sprite.resolve(state);
-    final clip = species.sprite.clip(state);
+    if (loop) _playing = resolved;
+    final clip = species.sprite.clip(resolved);
     final sprites = <Sprite>[];
     for (var i = 0; i < clip.frameCount; i++) {
-      final img = await game.images.load('creatures/${species.id}/${eff.name}_$i.png');
+      final img =
+          await game.images.load('creatures/${species.id}/${resolved.name}_$i.png');
       sprites.add(Sprite(img));
     }
-    if (gen != _loadGen) return; // a newer _play superseded us
+    if (gen != _loadGen) return; // superseded
     if (sprites.isEmpty) return; // misconfigured species: fail safe
-    final loop = oneShotThenBase ? false : clip.loop;
-    animation =
-        SpriteAnimation.spriteList(sprites, stepTime: clip.stepTime, loop: loop);
+    animation = SpriteAnimation.spriteList(sprites, stepTime: clip.stepTime, loop: loop);
     size = sprites.first.srcSize * _scale;
-    if (oneShotThenBase) {
-      // When the one-shot finishes, fall back to the current base state —
-      // but only if no newer species has taken over in the meantime, or a
-      // mid-reaction evolution would leave the pet stuck on the old species.
-      animationTicker?.onComplete = () {
-        if (species.id == _speciesId) _play(species, _base);
-      };
+    if (!loop && onComplete != null) {
+      animationTicker?.onComplete = onComplete;
     }
+  }
+
+  /// Face [dir] (1 right, -1 left). Flips the sprite around its centre only when
+  /// the direction actually changes (independent of the idle-pulse scale effect).
+  void setFacing(int dir) {
+    if (dir == 0 || dir == _facing) return;
+    _facing = dir;
+    flipHorizontallyAroundCenter();
   }
 
   /// Quick "press feedback" bounce: scale up then back down.
   void reactBounce() {
-    add(
-      ScaleEffect.by(
-        Vector2.all(1.15),
-        EffectController(
-            duration: 0.1, reverseDuration: 0.1, curve: Curves.easeOut),
-      ),
-    );
+    add(ScaleEffect.by(
+      Vector2.all(1.15),
+      EffectController(
+          duration: 0.1, reverseDuration: 0.1, curve: Curves.easeOut),
+    ));
   }
 
   /// Gentle continuous "breathing" scale pulse so the pet reads as alive.
   void startIdlePulse() {
-    add(
-      ScaleEffect.by(
-        Vector2.all(1.04),
-        EffectController(
-            duration: 0.9,
-            reverseDuration: 0.9,
-            infinite: true,
-            curve: Curves.easeInOut),
-      ),
-    );
+    add(ScaleEffect.by(
+      Vector2.all(1.04),
+      EffectController(
+          duration: 0.9,
+          reverseDuration: 0.9,
+          infinite: true,
+          curve: Curves.easeInOut),
+    ));
   }
 }

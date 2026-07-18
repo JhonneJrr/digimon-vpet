@@ -71,28 +71,52 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1A1420),
-      body: Stack(
-        children: [
-          Positioned.fill(child: GameWidget(game: game)),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                children: [
-                  _topBar(),
-                  const SizedBox(height: 8),
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: StatusBadges(pet: _petOrNull()),
-                  ),
-                  const Spacer(),
-                  _dock(),
-                ],
-              ),
-            ),
+      backgroundColor: const Color(0xFF0D0B17),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            children: [
+              _topBar(),
+              const SizedBox(height: 10),
+              // Framed "stage": a wide scene window showing most of the real map,
+              // with the pet ambling in it. Centred in the free vertical space.
+              Expanded(child: Center(child: _stage())),
+              const SizedBox(height: 10),
+              _dock(),
+            ],
           ),
-        ],
+        ),
+      ),
+    );
+  }
+
+  Widget _stage() {
+    return AspectRatio(
+      aspectRatio: 3 / 2,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: const Color(0x33FFFFFF)),
+          boxShadow: const [
+            BoxShadow(
+                color: Color(0x66000000), blurRadius: 18, offset: Offset(0, 8)),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(17),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              GameWidget(game: game),
+              Positioned(
+                top: 8,
+                right: 8,
+                child: StatusBadges(pet: _petOrNull()),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

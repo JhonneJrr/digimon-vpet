@@ -43,7 +43,7 @@ class Stats {
 }
 
 /// Care-driven animation states the renderer can show.
-enum CareAnim { idle, eat, happy, sick }
+enum CareAnim { idle, walk, eat, happy, sick }
 
 /// One animation clip: frame count + timing. Frame image paths are built by
 /// convention at render time: `creatures/<speciesId>/<state>_<i>.png`.

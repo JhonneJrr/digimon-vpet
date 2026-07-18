@@ -3,8 +3,27 @@ import 'dart:ui' as ui;
 import 'package:flame/components.dart';
 import '../state/biome.dart';
 
-/// Fraction of screen height where the pet's feet rest (kept from the old world).
+/// Fraction of screen height where the pet's feet rest (legacy default).
 const double groundTopFraction = 0.30;
+
+/// Fraction from the TOP of the scene where the walkable ground sits, per biome
+/// (calibrated from each real map's art). The pet's feet rest on this line.
+double groundFractionForBiome(Biome b) {
+  switch (b) {
+    case Biome.nursery:
+      return 0.78;
+    case Biome.meadow:
+      return 0.75;
+    case Biome.jungle:
+      return 0.76;
+    case Biome.savanna:
+      return 0.80;
+    case Biome.chrome:
+      return 0.70;
+    case Biome.wasteland:
+      return 0.73;
+  }
+}
 
 /// The real map sprite shown behind the pet for a given biome. Paths are
 /// relative to the game's `Images(prefix: 'assets/')` cache.
