@@ -15,11 +15,13 @@ class RoomConfig {
   final WidgetBuilder? content;
 }
 
-/// The doors shown in the menu. Order = display order.
+/// The six MainHUD sockets, in socket order (index N ↔ menu button btn_N).
+/// DigiVice reuses the map bg as a placeholder until it gets its own art.
 const List<RoomConfig> kRooms = [
-  RoomConfig(title: 'Treino', backgroundAsset: 'assets/game/backgrounds/room_training.png'),
-  RoomConfig(title: 'Batalha', backgroundAsset: 'assets/game/backgrounds/room_battle.png'),
-  RoomConfig(title: 'Mapa', backgroundAsset: 'assets/game/backgrounds/room_map.png'),
+  RoomConfig(title: 'DigiVice', backgroundAsset: 'assets/game/backgrounds/room_map.png'),
   RoomConfig(title: 'Loja', backgroundAsset: 'assets/game/backgrounds/room_shop.png'),
+  RoomConfig(title: 'Treino', backgroundAsset: 'assets/game/backgrounds/room_training.png'),
   RoomConfig(title: 'Evo / Bios', backgroundAsset: 'assets/game/backgrounds/room_evo.png'),
+  RoomConfig(title: 'Database', backgroundAsset: 'assets/game/backgrounds/room_database.png'),
+  RoomConfig(title: 'Batalha', backgroundAsset: 'assets/game/backgrounds/room_battle.png'),
 ];
