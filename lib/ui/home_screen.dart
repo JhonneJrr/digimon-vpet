@@ -6,8 +6,10 @@ import '../state/notifications.dart';
 import '../state/pet.dart';
 import '../state/pet_repository.dart';
 import 'death_screen.dart';
+import 'hud/care_radial.dart';
 import 'hud/hud_overlay.dart';
-import 'shell/menu_sheet.dart';
+import 'hud/pet_tap_target.dart';
+import 'shell/room_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,6 +20,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   late final VpetGame game;
   final Notifications _notifications = Notifications();
+  bool _careOpen = false;
 
   @override
   void initState() {
@@ -77,6 +80,23 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               fit: StackFit.expand,
               children: [
                 GameWidget(game: game),
+                // Tap the pet to toggle the care radial.
+                if (game.isReady)
+                  PetTapTarget(
+                    anchorX: game.petAnchorXFraction,
+                    groundFraction: game.petGroundFraction,
+                    heightFraction: game.petHeightFraction,
+                    onTap: _toggleCare,
+                  ),
+                // Close-catcher behind the bubbles while the menu is open.
+                if (_careOpen)
+                  Positioned.fill(
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: _closeCare,
+                    ),
+                  ),
+                _careRadial(),
                 _hud(),
               ],
             ),
@@ -86,22 +106,52 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
-  Widget _hud() {
+  void _toggleCare() => _setCare(!_careOpen);
+  void _closeCare() => _setCare(false);
+  void _setCare(bool open) {
+    setState(() => _careOpen = open);
+    game.careMenuOpen = open;
+  }
+
+  Future<void> _doCare(Future<void> Function() action) async {
+    _closeCare();
+    await action();
+  }
+
+  Widget _careRadial() {
     final ready = game.isReady;
     final p = ready ? game.pet : null;
-    final name = ready ? game.currentSpecies.name : 'Botamon';
-    return HudOverlay(
-      name: name,
-      pet: _petOrNull(),
-      onFeed: game.feed,
-      onClean: game.clean,
-      onMedicine: game.medicine,
-      onPlay: game.play,
-      onMenu: () => showMenuSheet(context),
+    final anchorX = ready ? game.petAnchorXFraction : 0.5;
+    // Anchor the arc on the pet's mid-body (feet minus half its height).
+    final anchorY = ready
+        ? (game.petGroundFraction - game.petHeightFraction * 0.5)
+        : 0.6;
+    return CareRadial(
+      open: _careOpen,
+      anchorX: anchorX,
+      anchorY: anchorY,
       feedEnabled: p != null && p.hunger > 0,
       cleanEnabled: p != null && p.poopCount > 0,
       medicineEnabled: p != null && p.health == HealthStatus.sick,
       playEnabled: p != null,
+      onFeed: () => _doCare(game.feed),
+      onClean: () => _doCare(game.clean),
+      onMedicine: () => _doCare(game.medicine),
+      onPlay: () => _doCare(game.play),
+    );
+  }
+
+  Widget _hud() {
+    final ready = game.isReady;
+    final name = ready ? game.currentSpecies.name : 'Botamon';
+    return HudOverlay(
+      name: name,
+      pet: _petOrNull(),
+      onOpenRoom: (room) {
+        _closeCare();
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (_) => RoomScreen(config: room)));
+      },
     );
   }
 
