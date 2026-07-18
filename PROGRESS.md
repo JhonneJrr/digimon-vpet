@@ -9,10 +9,11 @@ Human-readable status log + roadmap. Specs live in `docs/superpowers/specs/`, pl
 
 ## ▶️ RESUME POINT (read this first after a context clear)
 
-**Where we are:** **Phase 0+1 (data-driven creatures) is DONE and MERGED to `master`** (PR #3).
-**Sprite library reorganization is DONE** (branch `feat/sprite-library-taxonomy`) — the 67,755
-extracted frames are now a browsable `organized/` library (see §Sprite library below). Next up:
-**pick Phase 2 (battle system)** or a HUD/design overhaul using the extracted UI/battle art.
+**Where we are:** **Phase 0+1 (data-driven creatures) MERGED to `master`** (PR #3).
+**Sprite library reorganization DONE** (branch `feat/sprite-library-taxonomy`) — 67,755 frames now a
+browsable `organized/` library (see §Sprite library). **HUD overhaul + navigation shell DONE** (branch
+`feat/sprite-library-taxonomy` → `feat/hud-overhaul-shell`; see §HUD overhaul). Next up: **heavy
+mechanics — Phase 2 (battle) and/or training**, which now mount into the shell's `RoomScreen.content`.
 
 - **Git:** **PR #3 merged to `master`** (2026-07-18 UTC). Phase 1 = data-driven creatures on the real
   extracted art; 60/60 tests, `flutter analyze` clean, on-device verified (Botamon idle-animates with
@@ -56,6 +57,30 @@ Reorganized the 67,755 flat frames in `DigitalTamers02_extracted/sprites/` into 
 - **Key findings:** `b<N>` battle sprites map 1:1 to `d<N>` ids (confirmed via GML `sprite_index =
   b3_idle`); the evolution graph is a dense **522-node mesh** (no clean auto-lines → curation).
   Materialized with hardlinks + junctions (~0 extra disk; `sprites/` untouched).
+- **📌 REMINDER — add more curated lines:** only **7 of ~81 rookie lines** exist so far. Add any by
+  appending to `tools/sprite-library/curated_lines.json` (member ids from `meta/digimon-id-map.md`,
+  spine as `[parent,child]` pairs) then re-running build+materialize. Wishlist to revisit: Wormmon/
+  Stingmon, Terriermon, Dracomon, Hawkmon, Armadillomon, Veemon's Imperialdramon/Paildramon jogress
+  branch, plus the Black/X-Antibody variant lines.
+
+### ✅ HUD overhaul + navigation shell (DONE — `feat/hud-overhaul-shell`)
+
+First-pass **hybrid** redesign (a deeper 2nd visual overhaul is deferred by choice). Spec:
+`docs/superpowers/specs/2026-07-18-hud-overhaul-navigation-shell-design.md`; plan:
+`docs/superpowers/plans/2026-07-18-hud-overhaul-navigation-shell.md`. 64/64 tests, analyze clean,
+on-device verified (real map renders pixel-perfect; biome-driven map swaps on evolution; ☰ opens the
+doors).
+
+- **Real map scene:** `lib/game/map_background.dart` `MapBackgroundComponent` draws the biome's real
+  map (`assets/game/backgrounds/biome_<biome>.png`) cover-fit + `FilterQuality.none`, replacing the
+  procedural `world_background.dart` (deleted). Biome→map is a `switch` in `mapAssetForBiome`.
+- **Hybrid HUD:** kept the glass top bar + dock; added a `☰` menu button (`TopStatusBar.onMenu`).
+- **Navigation shell** (`lib/ui/shell/`): `showMenuSheet` (glass sheet of doors) → pushes a reusable
+  `RoomScreen(RoomConfig{title, backgroundAsset, comingSoon, content})`. 5 stub rooms (Treino/Batalha/
+  Mapa/Loja/Evo) show the real room background + "em breve". **`RoomConfig.content` is the slot where
+  future combat/training UIs mount — no shell refactor needed.**
+- **Assets:** `tools/sprite-library/copy_app_assets.sh` copies the shipped subset from `organized/`
+  into `assets/game/backgrounds/` (committed, private repo). `lib/state/` untouched.
 
 ---
 
