@@ -17,14 +17,14 @@ class HudOverlay extends StatelessWidget {
   final String name;
   final void Function(RoomConfig room) onOpenRoom;
 
-  // Socket centres as fractions of the 538x300 HUD box (five bottom-left + one
-  // right), MEASURED from the dark hex-hole centres in `main_hud.png`.
-  static const _socketX = [0.103, 0.224, 0.345, 0.466, 0.587, 0.966];
-  static const _socketY = 0.862;
-  // The menu-button art is 65x45 native; render it at that exact size in the
-  // 538x300 space (so it seats in the socket undistorted, not stretched square).
-  static const _btnWFrac = 65 / 538;
-  static const _btnHFrac = 45 / 300;
+  // Button centres + size as fractions of the 538x300 HUD box, CALIBRATED to the
+  // real game: measured from a reference screenshot of Reborn 2 (whose buttons
+  // seat 1:1 in this same spr_MainHUD art). The buttons sit slightly left of and
+  // below the decorative socket holes and tile edge-to-edge along the base.
+  static const _socketX = [0.065, 0.180, 0.302, 0.423, 0.543, 0.927];
+  static const _socketY = 0.895;
+  static const _btnWFrac = 0.132;
+  static const _btnHFrac = 0.158;
 
   @override
   Widget build(BuildContext context) {
