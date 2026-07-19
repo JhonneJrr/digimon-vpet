@@ -145,3 +145,11 @@ Plan: docs/superpowers/plans/2026-07-18-radial-care-menu-and-real-hud-buttons.md
 - FINAL-REVIEW FIX (Important #1): applied 9790ca9..4c26798 (per-frame petAnchorX ValueNotifier + ValueListenableBuilder; disposed in onRemove). Full suite 82/82, analyze clean. Controller-verified diff. HEAD 4c26798.
 - Task 9 verify + on-device: DONE. On-device confirmed (landscape): 6 real menu buttons seat in sockets; tapping the pet opens the top-arc radial (meat/poop/bandage/ball) no HUD collision; pet reads small; Training socket -> Treino 'em breve' room. Full suite 82/82, analyze clean.
 - MERGED + PUSHED: master 451bb51..95706f5 (merge commit 95706f5). Plan COMPLETE. feat/hud-overhaul-shell fully merged. 81/81 tests, analyze clean on merged master.
+
+## POST-MERGE HUD FIXES (2026-07-18, on master) — in-flight
+- MERGED radial-care plan to master (95706f5), pushed. Then on-device testing surfaced HUD issues.
+- 6809c7b: buttons-in-sockets (v1) + Reborn-2 need pop-ups over pet (care_indicators.dart, assets/game/ui/needs/). Removed StatusBadges from HUD. 84/84 tests.
+- 6cfec1a: recalibrated button seating to REAL game (measured reference screenshot; _socketX/_socketY/_btnWFrac/_btnHFrac in hud_overlay.dart). Pushed.
+- HEAD 6cfec1a. Created .claude/agents/hud-visual-qa.md (image-only analysis; stalls if told to run emulator).
+- OPEN (user reported on latest APK): (1) buttons "still errors" — re-measure #4 vs #3, nudge constants. (2) top-left name/status "completamente bugada" — real game has portrait+name+attributes+level; ours only name on plate + empty level gauge. Not yet diagnosed. See PROGRESS RESUME POINT for the two screenshot paths + scratchpad measure scripts.
+- NEXT: diagnose both (image compare #4 vs #3, or dispatch hud-visual-qa image-only), fix hud_overlay.dart, analyze+test, rebuild APK.

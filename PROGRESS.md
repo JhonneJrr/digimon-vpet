@@ -9,25 +9,47 @@ Human-readable status log + roadmap. Specs live in `docs/superpowers/specs/`, pl
 
 ## ▶️ RESUME POINT (read this first after a context clear)
 
-**Branch:** `feat/hud-overhaul-shell` @ `4c26798` (stacked on `feat/sprite-library-taxonomy`;
-**nothing merged to `master` this session** — Phase 0+1 is the last thing on master, PR #3).
+**Branch:** `master` @ `6cfec1a` (all pushed to `origin/master`). Working tree clean except
+pre-existing untracked `.claude/commands/`. 84/84 tests, `flutter analyze` clean.
 
-**This session (2026-07-18) shipped, all committed on the branch above, 82/82 tests + `flutter
-analyze` clean + on-device verified:**
-1. **graphify hook fix** + **Sprite library reorganization** (67,755 frames → `organized/`) + the
-   **HUD overhaul + navigation shell** and its landscape "2nd overhaul" (see §HUD overhaul).
-2. **Radial care menu + real HUD menu buttons DONE** (see §Radial care menu) — the six hex sockets are
-   now the real `spr_MainButtons_ENG` menu buttons wired to the RoomScreen shell (mapping triangulated
-   from decompiled `obj_MainButtons` GML); the four care actions moved to a **top-arc radial menu that
-   opens on tapping the Digimon** (meat/poop/bandage/ball, real dump art); the pet line was **shrunk
-   ~0.71** so it reads in the landscape. Spec + plan under `docs/superpowers/`; SDD ledger:
-   `.superpowers/sdd/progress.md`.
+**This session (2026-07-18) shipped & MERGED to master:** the **radial care menu + real HUD menu
+buttons** (SDD plan, 9 tasks + final review + fix — see §Radial care menu), merged via `95706f5`,
+then two follow-up HUD fixes from on-device testing:
+- `6809c7b` — **buttons seated in sockets** (first attempt) + **Reborn-2 need pop-ups over the pet**
+  (`lib/ui/hud/care_indicators.dart`: hunger/mess/sick/unhappy icons bob above the Digimon's head,
+  replacing the old HUD `StatusBadges`; assets in `assets/game/ui/needs/`).
+- `6cfec1a` — **button seating re-calibrated to the REAL game.** The first attempt centred buttons on
+  the PNG's socket holes, which was wrong; measured the real Reborn 2 reference screenshot (its buttons
+  seat 1:1 in our identical `spr_MainHUD` art) → `_socketX=[0.065,0.180,0.302,0.423,0.543,0.927]`,
+  `_socketY=0.895`, size `_btnWFrac=0.132`/`_btnHFrac=0.158` in `lib/ui/hud/hud_overlay.dart`.
+- A **`hud-visual-qa` agent** was created (`.claude/agents/hud-visual-qa.md`) for HUD/visual layout
+  analysis (measure sockets in the PNG, compare to renders, prescribe exact fractions). Note: it stalled
+  once when told to launch the emulator — dispatch it for **image-only** analysis to avoid that.
 
-**Next step (awaiting the user's pick):** (a) **open a PR** of this branch → `master` (carries the
-sprite-library + HUD-overhaul + radial-care commits), or (b) start **heavy mechanics** (Phase 2 battle
-and/or training, mounting into a socket's `RoomScreen` — Treino/Batalha/Loja/Evo/Database/DigiVice stubs
-already exist). Deferred cleanup (from the final review): delete the now-orphaned `menu_sheet.dart`;
-add a geometry assertion to `pet_tap_target_test`; add a stubbed home-assembly widget test.
+**⏳ IN-FLIGHT — two visual bugs the user reported on the latest APK (their screenshot
+`C:\Users\felip\Downloads\WhatsApp Image 2026-07-18 at 22.35.32.jpeg`, "#4"; reference real-game shot
+`...21.49.40.jpeg`, "#3"):**
+1. **Buttons: "still errors"** — much closer now but not pixel-perfect vs #3. Next: re-measure #4's
+   button centres/size and nudge the `_socketX/_socketY/_btnWFrac/_btnHFrac` constants in
+   `hud_overlay.dart`. (Measurement scripts live in the scratchpad — `measure_ref.py`, `compose2.py`,
+   `align.py` — pattern: crop bottom bar, detect blue/red button blobs, fractions of the HUD box
+   `x=[138,1461]` on a 1600×738 phone shot.)
+2. **Top-left name/status area "completamente bugada"** — the name plate (`Positioned left:w*0.05,
+   top:h*0.045` in `hud_overlay.dart`) shows only the species name on the portrait plate; the real
+   game (#3) top-left has a **portrait + name + family/attribute icons + level number** and the centre
+   **level gauge** is empty in ours. NOT YET DIAGNOSED — I was mid-cropping the top bars for comparison
+   (`.../tmp/toptop.py`) when we stopped. RESUME by comparing #4 vs #3 top bars and deciding scope
+   (just fix the name placement, or build the fuller real top-bar). Consider dispatching `hud-visual-qa`
+   (image-only) with both screenshots to get exact fixes for BOTH bugs at once.
+
+**Next concrete action on resume:** diagnose the two bugs above (image comparison of #4 vs #3), apply
+the `hud_overlay.dart` fixes, `flutter analyze` + `flutter test`, then rebuild the APK
+(`flutter build apk --release`) for the user to re-test. This is a **bug-fix loop on `master`** (user's
+"mesma coisa de sempre" flow: fix → commit → push → rebuild APK).
+
+**Deferred cleanup (from the SDD final review, non-blocking):** delete the now-orphaned
+`menu_sheet.dart` + `status_badges.dart` (both replaced, only their own tests reference them); add a
+geometry assertion to `pet_tap_target_test`; add a stubbed home-assembly widget test.
 
 - **Git:** **PR #3 merged to `master`** (2026-07-18 UTC). Phase 1 = data-driven creatures on the real
   extracted art; 60/60 tests, `flutter analyze` clean, on-device verified (Botamon idle-animates with
