@@ -75,6 +75,7 @@ flutter:
     - assets/game/ui/
     - assets/game/ui/menu_buttons/
     - assets/game/ui/care/
+    - assets/game/ui/needs/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

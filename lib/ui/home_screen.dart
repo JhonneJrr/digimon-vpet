@@ -2,10 +2,12 @@
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
 import '../game/vpet_game.dart';
+import '../state/game_config.dart';
 import '../state/notifications.dart';
 import '../state/pet.dart';
 import '../state/pet_repository.dart';
 import 'death_screen.dart';
+import 'hud/care_indicators.dart';
 import 'hud/care_radial.dart';
 import 'hud/hud_overlay.dart';
 import 'hud/pet_tap_target.dart';
@@ -80,6 +82,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               fit: StackFit.expand,
               children: [
                 GameWidget(game: game),
+                // Reborn-2-style need pop-ups floating over the Digimon's head.
+                _careIndicators(),
                 // Tap the pet to toggle the care radial. Rebuilt from
                 // game.petAnchorX (updated every frame) rather than the
                 // ~1x/sec onPetChanged tick, so the hitbox tracks a walking
@@ -152,7 +156,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     final name = ready ? game.currentSpecies.name : 'Botamon';
     return HudOverlay(
       name: name,
-      pet: _petOrNull(),
       onOpenRoom: (room) {
         _closeCare();
         Navigator.of(context)
@@ -161,13 +164,21 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
-  Pet _petOrNull() {
-    // game.pet is `late`; before load, show a neutral newborn so the HUD can
-    // render without throwing (mirrors the MVP's null-guard intent).
-    try {
-      return game.pet;
-    } catch (_) {
-      return Pet.newborn(0);
-    }
+  Widget _careIndicators() {
+    // Hidden before load and while the care radial is open (it covers the head).
+    if (!game.isReady || _careOpen) return const SizedBox.shrink();
+    final p = game.pet;
+    final headY = game.petGroundFraction - game.petHeightFraction;
+    return ValueListenableBuilder<double>(
+      valueListenable: game.petAnchorX,
+      builder: (context, ax, _) => CareIndicators(
+        anchorX: ax,
+        headY: headY,
+        hungry: p.hunger >= GameConfig.hungerWarnThreshold,
+        messy: p.poopCount > 0,
+        sick: p.health == HealthStatus.sick,
+        unhappy: p.happiness <= GameConfig.happinessWarnThreshold,
+      ),
+    );
   }
 }

@@ -41,3 +41,14 @@ cp "$ORG/items/spr_Items_3.png"  "$CAREDST/medicine.png"
 cp "$ORG/effects/spr_Ball_0.png" "$CAREDST/play.png"
 
 echo "copied 6 menu buttons to $BTNDST and 4 care icons to $CAREDST"
+
+# --- Need indicators (pop-ups over the Digimon, Reborn 2 style). Mapping from
+#     obj_DigiWorld_HUD_Draw GML: care_mini 0=hunger(fome), 2=sick(doente);
+#     poop=mess; BlackHeart=bad mood/unhappy. ---
+NEEDDST="/c/Users/felip/Documents/digimon/assets/game/ui/needs"
+mkdir -p "$NEEDDST"
+cp "$ORG/ui/spr_care_mini_icons_0.png" "$NEEDDST/hunger.png"
+cp "$ORG/items/spr_poop_0.png"         "$NEEDDST/mess.png"
+cp "$ORG/ui/spr_care_mini_icons_2.png" "$NEEDDST/sick.png"
+cp "$ORG/effects/spr_BlackHeart_0.png" "$NEEDDST/unhappy.png"
+echo "copied 4 need indicators to $NEEDDST"

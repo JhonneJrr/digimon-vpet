@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:digimon/state/pet.dart';
 import 'package:digimon/ui/hud/hud_overlay.dart';
 import 'package:digimon/ui/shell/room_config.dart';
 
@@ -14,7 +13,6 @@ void main() {
   testWidgets('renders six socket buttons', (t) async {
     await t.pumpWidget(wrap(HudOverlay(
       name: 'Agumon',
-      pet: Pet.newborn(0),
       onOpenRoom: (_) {},
     )));
     for (var i = 0; i < 6; i++) {
@@ -26,7 +24,6 @@ void main() {
     RoomConfig? opened;
     await t.pumpWidget(wrap(HudOverlay(
       name: 'Agumon',
-      pet: Pet.newborn(0),
       onOpenRoom: (r) => opened = r,
     )));
     await t.tap(find.byKey(const ValueKey('hud_socket_2')));
